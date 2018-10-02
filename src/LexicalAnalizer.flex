@@ -44,8 +44,14 @@ LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace     = {LineTerminator} | [ \t\f]
 
-DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
-Identifier = α[A-Za-z0-9_]*
+//DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
+Number = ([1-9][0-9]*)|0
+
+//ProgName
+BeginProgram = "BEGINPROG"
+ProgramName = [A-Z]([a-z]+[A-Z]*|[A-Z]*[a-z]+)*
+
+Identifier = [A-Za-z][A-Za-z0-9_]*
 
 //Operators
 GreaterThan = ">"
@@ -60,22 +66,32 @@ Negation = "!"
 //States//
 //////////
 
-%xstate YYINITIAL
+%xstate YYINITIAL, BEGINPROGRAMSTATE
 
 %%//Identification of tokens and actions
 
-{DecimalNumber}             {match(new Symbol(LexicalUnit.NUMBER,yyline,yycolumn,yytext()));}
-{Identifier}                {match(new Symbol(LexicalUnit.VARNAME,yyline,yycolumn,yytext()));}
+<YYINITIAL> {
+    {BeginProgram}              {match(new Symbol(LexicalUnit.BEGINPROG,yyline,yycolumn,yytext()));
+                                    yybegin(BEGINPROGRAMSTATE);}
 
-//Operators
-{GreaterThan}               {match(new Symbol(LexicalUnit.GT,yyline,yycolumn,yytext()));}
-{GreaterEqualThan}          {match(new Symbol(LexicalUnit.GEQ,yyline,yycolumn,yytext()));}
-{LessThan}                  {match(new Symbol(LexicalUnit.LT,yyline,yycolumn,yytext()));}
-{LessEqualThan}             {match(new Symbol(LexicalUnit.LEQ,yyline,yycolumn,yytext()));}
-{Equal}                     {match(new Symbol(LexicalUnit.EQ,yyline,yycolumn,yytext()));}
-{Different}                 {match(new Symbol(LexicalUnit.NEQ,yyline,yycolumn,yytext()));}
-{Negation}                  {match(new Symbol(LexicalUnit.NOT,yyline,yycolumn,yytext()));}
+    ^{Number}$                  {match(new Symbol(LexicalUnit.NUMBER,yyline,yycolumn,yytext()));}
+    //{Identifier}                {match(new Symbol(LexicalUnit.VARNAME,yyline,yycolumn,yytext()));}
 
-/* whitespace */
-{WhiteSpace}                { /* ignore */ }
-.                           {}
+    //Operators
+    {GreaterThan}               {match(new Symbol(LexicalUnit.GT,yyline,yycolumn,yytext()));}
+    {GreaterEqualThan}          {match(new Symbol(LexicalUnit.GEQ,yyline,yycolumn,yytext()));}
+    {LessThan}                  {match(new Symbol(LexicalUnit.LT,yyline,yycolumn,yytext()));}
+    {LessEqualThan}             {match(new Symbol(LexicalUnit.LEQ,yyline,yycolumn,yytext()));}
+    {Equal}                     {match(new Symbol(LexicalUnit.EQ,yyline,yycolumn,yytext()));}
+    {Different}                 {match(new Symbol(LexicalUnit.NEQ,yyline,yycolumn,yytext()));}
+    {Negation}                  {match(new Symbol(LexicalUnit.NOT,yyline,yycolumn,yytext()));}
+
+    /* whitespace */
+    {WhiteSpace}                { /* ignore */ }
+    .                           {}
+}
+
+<BEGINPROGRAMSTATE> {
+    ^{ProgramName}$             {match(new Symbol(LexicalUnit.PROGNAME,yyline,yycolumn,yytext()));
+                                yybegin(YYINITIAL);}
+}

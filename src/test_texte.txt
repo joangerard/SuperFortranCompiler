@@ -22,4 +22,3 @@ ENDFOR
     PRINT(-1)
   ENDIF
 ENDPROG
-

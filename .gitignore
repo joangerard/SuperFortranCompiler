@@ -1,0 +1,4 @@
+*.class
+LexicalAnalizer.java
+dist/*
+.idea

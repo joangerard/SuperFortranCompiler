@@ -25,7 +25,14 @@
 %init}
 
 %{//adding Java code (methods, inner classes, ...)
-public Symbol match(Symbol symbol) {
+public Symbol createSymbol(LexicalUnit lexicalUnit) {
+    Symbol symbol = new Symbol(lexicalUnit,yyline,yycolumn,yytext());
+    System.out.println(symbol.toString());
+    return symbol;
+}
+
+public Symbol createSymbol(LexicalUnit lexicalUnit, Object value) {
+    Symbol symbol = new Symbol(lexicalUnit,yyline,yycolumn,value);
     System.out.println(symbol.toString());
     return symbol;
 }
@@ -42,49 +49,121 @@ public Symbol match(Symbol symbol) {
 //-00005.05E-05
 LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
-WhiteSpace     = {LineTerminator} | [ \t\f]
+WhiteSpace     = [ \t\f]
+
+EndLine = "\r"?"\n"
 
 //DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
-Number = ([1-9][0-9]*)|0
+Number = [0-9]|[1-9][0-9]*
 
 //ProgName
 BeginProgram = "BEGINPROG"
 ProgramName = [A-Z]([a-z]+[A-Z]*|[A-Z]*[a-z]+)+([A-Za-z])*
+EndProg = "ENDPROG"
 
-Identifier = [A-Za-z][A-Za-z0-9_]*
+//Variables
+Variables = "VARIABLES"
+VarName = [a-z][a-z0-9_]*
 
 //Operators
 GreaterThan = ">"
 GreaterEqualThan = ">="
 LessThan = "<"
 LessEqualThan = "<="
-Equal = "=="
-Different = "!="
-Negation = "!"
+Equal = "="
+Different = "<>"
+Comma = ","
+
+//Comments
+LongCommentInit = "/*"
+LongCommentEnd = "*/"
+ShortComment = "//"
+
+//Instruction
+If = "IF"
+While = "WHILE"
+Do = "DO"
+EndWhile = "ENDWHILE"
+For = "FOR"
+To = "TO"
+EndFor = "ENDFOR"
+Print = "PRINT"
+Read = "READ"
+Then = "THEN"
+EndIf = "ENDIF"
+Else = "ELSE"
+Not = "NOT"
+
+//Operations
+Plus = "+"
+Minus = "-"
+Times = "*"
+Divide = "/"
+
+//Parenthesis
+OpenParenthesis = "("
+CloseParenthesis = ")"
 
 //////////
 //States//
 //////////
 
-%xstate YYINITIAL, BEGINPROGRAMSTATE
+%xstate YYINITIAL, BEGINPROGRAMSTATE, LONGCOMMENTSTATE, SHORTCOMMENTSTATE
 
 %%//Identification of tokens and actions
 
 <YYINITIAL> {
-    {BeginProgram}              {match(new Symbol(LexicalUnit.BEGINPROG,yyline,yycolumn,yytext()));
+    //ProgName
+    {BeginProgram}              {createSymbol(LexicalUnit.BEGINPROG);
                                     yybegin(BEGINPROGRAMSTATE);}
+    {EndProg}                   {createSymbol(LexicalUnit.ENDPROG);}
 
-    ^{Number}$                  {match(new Symbol(LexicalUnit.NUMBER,yyline,yycolumn,yytext()));}
-    //{Identifier}                {match(new Symbol(LexicalUnit.VARNAME,yyline,yycolumn,yytext()));}
+    //Variables
+    {Variables}                 {createSymbol(LexicalUnit.VARIABLES);}
+    {VarName}                   {createSymbol(LexicalUnit.VARNAME);}
 
     //Operators
-    {GreaterThan}               {match(new Symbol(LexicalUnit.GT,yyline,yycolumn,yytext()));}
-    {GreaterEqualThan}          {match(new Symbol(LexicalUnit.GEQ,yyline,yycolumn,yytext()));}
-    {LessThan}                  {match(new Symbol(LexicalUnit.LT,yyline,yycolumn,yytext()));}
-    {LessEqualThan}             {match(new Symbol(LexicalUnit.LEQ,yyline,yycolumn,yytext()));}
-    {Equal}                     {match(new Symbol(LexicalUnit.EQ,yyline,yycolumn,yytext()));}
-    {Different}                 {match(new Symbol(LexicalUnit.NEQ,yyline,yycolumn,yytext()));}
-    {Negation}                  {match(new Symbol(LexicalUnit.NOT,yyline,yycolumn,yytext()));}
+    {GreaterThan}               {createSymbol(LexicalUnit.GT);}
+    {GreaterEqualThan}          {createSymbol(LexicalUnit.GEQ);}
+    {LessThan}                  {createSymbol(LexicalUnit.LT);}
+    {LessEqualThan}             {createSymbol(LexicalUnit.LEQ);}
+    {Equal}                     {createSymbol(LexicalUnit.EQ);}
+    {Different}                 {createSymbol(LexicalUnit.NEQ);}
+    {Comma}                     {createSymbol(LexicalUnit.COMMA);}
+
+    //Comment
+    {LongCommentInit}           {yybegin(LONGCOMMENTSTATE);}
+    {ShortComment}              {yybegin(SHORTCOMMENTSTATE);}
+
+    //EndLine
+    {EndLine}                   {createSymbol(LexicalUnit.ENDLINE,"\\n");}
+
+    //Instructions
+    {If}                        {createSymbol(LexicalUnit.IF);}
+    {While}                     {createSymbol(LexicalUnit.WHILE);}
+    {Do}                        {createSymbol(LexicalUnit.DO);}
+    {EndWhile}                  {createSymbol(LexicalUnit.ENDWHILE);}
+    {For}                       {createSymbol(LexicalUnit.FOR);}
+    {To}                        {createSymbol(LexicalUnit.TO);}
+    {EndFor}                    {createSymbol(LexicalUnit.ENDFOR);}
+    {Print}                     {createSymbol(LexicalUnit.PRINT);}
+    {Read}                      {createSymbol(LexicalUnit.READ);}
+    {Then}                      {createSymbol(LexicalUnit.THEN);}
+    {EndIf}                     {createSymbol(LexicalUnit.ENDIF);}
+    {Else}                      {createSymbol(LexicalUnit.ELSE);}
+    {Not}                       {createSymbol(LexicalUnit.NOT);}
+    
+    //Operations
+    {Plus}                      {createSymbol(LexicalUnit.PLUS);}
+    {Minus}                     {createSymbol(LexicalUnit.MINUS);}
+    {Times}                     {createSymbol(LexicalUnit.TIMES);}
+    {Divide}                    {createSymbol(LexicalUnit.DIVIDE);}
+
+    //Parenthesis
+    {OpenParenthesis}           {createSymbol(LexicalUnit.LPAREN);}
+    {CloseParenthesis}          {createSymbol(LexicalUnit.RPAREN);}
+
+    {Number}                    {createSymbol(LexicalUnit.NUMBER);}
 
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }
@@ -92,9 +171,20 @@ Negation = "!"
 }
 
 <BEGINPROGRAMSTATE> {
-    {ProgramName}$             {match(new Symbol(LexicalUnit.PROGNAME,yyline,yycolumn,yytext()));
+    {ProgramName}$             {createSymbol(LexicalUnit.PROGNAME);
                                 yybegin(YYINITIAL);}
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }
     .                           {yybegin(YYINITIAL);}
+}
+
+<LONGCOMMENTSTATE> {
+    {LongCommentEnd}            {yybegin(YYINITIAL);}
+    .                           {}
+    {EndLine}                   {}
+}
+
+<SHORTCOMMENTSTATE> {
+    {EndLine}                   {yybegin(YYINITIAL);}
+    .                           {}
 }

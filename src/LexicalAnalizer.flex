@@ -49,7 +49,7 @@ Number = ([1-9][0-9]*)|0
 
 //ProgName
 BeginProgram = "BEGINPROG"
-ProgramName = [A-Z]([a-z]+[A-Z]*|[A-Z]*[a-z]+)*
+ProgramName = [A-Z]([a-z]+[A-Z]*|[A-Z]*[a-z]+)+([A-Za-z])*
 
 Identifier = [A-Za-z][A-Za-z0-9_]*
 
@@ -92,6 +92,9 @@ Negation = "!"
 }
 
 <BEGINPROGRAMSTATE> {
-    ^{ProgramName}$             {match(new Symbol(LexicalUnit.PROGNAME,yyline,yycolumn,yytext()));
+    {ProgramName}$             {match(new Symbol(LexicalUnit.PROGNAME,yyline,yycolumn,yytext()));
                                 yybegin(YYINITIAL);}
+    /* whitespace */
+    {WhiteSpace}                { /* ignore */ }
+    .                           {yybegin(YYINITIAL);}
 }

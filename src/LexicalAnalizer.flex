@@ -20,26 +20,22 @@
 //CODE//
 ////////
 %init{//code to execute before scanning
-	
-
+    System.out.println("");
+    System.out.println("      LEXICAL ANALIZER   ");
+    System.out.println("___________________________");
 %init}
 
 %{//adding Java code (methods, inner classes, ...)
-public Symbol createSymbol(LexicalUnit lexicalUnit) {
-    Symbol symbol = new Symbol(lexicalUnit,yyline,yycolumn,yytext());
-    System.out.println(symbol.toString());
-    return symbol;
-}
+ProcessInterface process = new MapOrder();
+IdentifierListInterface identifierList = new IdentifierList(process);
+PrinterInterface symbolPrinter = new SymbolPrinter();
 
-public Symbol createSymbol(LexicalUnit lexicalUnit, Object value) {
-    Symbol symbol = new Symbol(lexicalUnit,yyline,yycolumn,value);
-    System.out.println(symbol.toString());
-    return symbol;
-}
 %}
 
 %eof{//code to execute after scanning
-   System.out.println("Done");
+   System.out.println(""); 
+   System.out.println("Identifiers");
+   System.out.println(identifierList.toString());
 %eof}
 
 ////////////////////////////////
@@ -54,7 +50,8 @@ WhiteSpace     = [ \t\f]
 EndLine = "\r"?"\n"
 
 //DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
-Number = [0-9]|[1-9][0-9]*
+Number = [0-9]|([1-9][0-9]*)
+NotNumber = 0+[0-9]+
 
 //ProgName
 BeginProgram = "BEGINPROG"
@@ -114,56 +111,58 @@ CloseParenthesis = ")"
 
 <YYINITIAL> {
     //ProgName
-    {BeginProgram}              {createSymbol(LexicalUnit.BEGINPROG);
+    {BeginProgram}              {symbolPrinter.print(LexicalUnit.BEGINPROG, yyline, yycolumn, yytext());
                                     yybegin(BEGINPROGRAMSTATE);}
-    {EndProg}                   {createSymbol(LexicalUnit.ENDPROG);}
+    {EndProg}                   {symbolPrinter.print(LexicalUnit.ENDPROG, yyline, yycolumn, yytext());}
 
     //Variables
-    {Variables}                 {createSymbol(LexicalUnit.VARIABLES);}
-    {VarName}                   {createSymbol(LexicalUnit.VARNAME);}
+    {Variables}                 {symbolPrinter.print(LexicalUnit.VARIABLES, yyline, yycolumn, yytext());}
+    {VarName}                   {symbolPrinter.print(LexicalUnit.VARNAME, yyline, yycolumn, yytext());
+                                identifierList.add(yytext(), yyline + 1);}
 
     //Operators
-    {GreaterThan}               {createSymbol(LexicalUnit.GT);}
-    {GreaterEqualThan}          {createSymbol(LexicalUnit.GEQ);}
-    {LessThan}                  {createSymbol(LexicalUnit.LT);}
-    {LessEqualThan}             {createSymbol(LexicalUnit.LEQ);}
-    {Equal}                     {createSymbol(LexicalUnit.EQ);}
-    {Different}                 {createSymbol(LexicalUnit.NEQ);}
-    {Comma}                     {createSymbol(LexicalUnit.COMMA);}
+    {GreaterThan}               {symbolPrinter.print(LexicalUnit.GT, yyline, yycolumn, yytext());}
+    {GreaterEqualThan}          {symbolPrinter.print(LexicalUnit.GEQ, yyline, yycolumn, yytext());}
+    {LessThan}                  {symbolPrinter.print(LexicalUnit.LT, yyline, yycolumn, yytext());}
+    {LessEqualThan}             {symbolPrinter.print(LexicalUnit.LEQ, yyline, yycolumn, yytext());}
+    {Equal}                     {symbolPrinter.print(LexicalUnit.EQ, yyline, yycolumn, yytext());}
+    {Different}                 {symbolPrinter.print(LexicalUnit.NEQ, yyline, yycolumn, yytext());}
+    {Comma}                     {symbolPrinter.print(LexicalUnit.COMMA, yyline, yycolumn, yytext());}
 
     //Comment
     {LongCommentInit}           {yybegin(LONGCOMMENTSTATE);}
     {ShortComment}              {yybegin(SHORTCOMMENTSTATE);}
 
     //EndLine
-    {EndLine}                   {createSymbol(LexicalUnit.ENDLINE,"\\n");}
+    {EndLine}                   {symbolPrinter.print(LexicalUnit.ENDLINE, yyline, yycolumn,"\\n");}
 
     //Instructions
-    {If}                        {createSymbol(LexicalUnit.IF);}
-    {While}                     {createSymbol(LexicalUnit.WHILE);}
-    {Do}                        {createSymbol(LexicalUnit.DO);}
-    {EndWhile}                  {createSymbol(LexicalUnit.ENDWHILE);}
-    {For}                       {createSymbol(LexicalUnit.FOR);}
-    {To}                        {createSymbol(LexicalUnit.TO);}
-    {EndFor}                    {createSymbol(LexicalUnit.ENDFOR);}
-    {Print}                     {createSymbol(LexicalUnit.PRINT);}
-    {Read}                      {createSymbol(LexicalUnit.READ);}
-    {Then}                      {createSymbol(LexicalUnit.THEN);}
-    {EndIf}                     {createSymbol(LexicalUnit.ENDIF);}
-    {Else}                      {createSymbol(LexicalUnit.ELSE);}
-    {Not}                       {createSymbol(LexicalUnit.NOT);}
+    {If}                        {symbolPrinter.print(LexicalUnit.IF, yyline, yycolumn, yytext());}
+    {While}                     {symbolPrinter.print(LexicalUnit.WHILE, yyline, yycolumn, yytext());}
+    {Do}                        {symbolPrinter.print(LexicalUnit.DO, yyline, yycolumn, yytext());}
+    {EndWhile}                  {symbolPrinter.print(LexicalUnit.ENDWHILE, yyline, yycolumn, yytext());}
+    {For}                       {symbolPrinter.print(LexicalUnit.FOR, yyline, yycolumn, yytext());}
+    {To}                        {symbolPrinter.print(LexicalUnit.TO, yyline, yycolumn, yytext());}
+    {EndFor}                    {symbolPrinter.print(LexicalUnit.ENDFOR, yyline, yycolumn, yytext());}
+    {Print}                     {symbolPrinter.print(LexicalUnit.PRINT, yyline, yycolumn, yytext());}
+    {Read}                      {symbolPrinter.print(LexicalUnit.READ, yyline, yycolumn, yytext());}
+    {Then}                      {symbolPrinter.print(LexicalUnit.THEN, yyline, yycolumn, yytext());}
+    {EndIf}                     {symbolPrinter.print(LexicalUnit.ENDIF, yyline, yycolumn, yytext());}
+    {Else}                      {symbolPrinter.print(LexicalUnit.ELSE, yyline, yycolumn, yytext());}
+    {Not}                       {symbolPrinter.print(LexicalUnit.NOT, yyline, yycolumn, yytext());}
     
     //Operations
-    {Plus}                      {createSymbol(LexicalUnit.PLUS);}
-    {Minus}                     {createSymbol(LexicalUnit.MINUS);}
-    {Times}                     {createSymbol(LexicalUnit.TIMES);}
-    {Divide}                    {createSymbol(LexicalUnit.DIVIDE);}
+    {Plus}                      {symbolPrinter.print(LexicalUnit.PLUS, yyline, yycolumn, yytext());}
+    {Minus}                     {symbolPrinter.print(LexicalUnit.MINUS, yyline, yycolumn, yytext());}
+    {Times}                     {symbolPrinter.print(LexicalUnit.TIMES, yyline, yycolumn, yytext());}
+    {Divide}                    {symbolPrinter.print(LexicalUnit.DIVIDE, yyline, yycolumn, yytext());}
 
     //Parenthesis
-    {OpenParenthesis}           {createSymbol(LexicalUnit.LPAREN);}
-    {CloseParenthesis}          {createSymbol(LexicalUnit.RPAREN);}
+    {OpenParenthesis}           {symbolPrinter.print(LexicalUnit.LPAREN, yyline, yycolumn, yytext());}
+    {CloseParenthesis}          {symbolPrinter.print(LexicalUnit.RPAREN, yyline, yycolumn, yytext());}
 
-    {Number}                    {createSymbol(LexicalUnit.NUMBER);}
+    {NotNumber}                 {}
+    {Number}                    {symbolPrinter.print(LexicalUnit.NUMBER, yyline, yycolumn, yytext());}
 
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }
@@ -171,7 +170,7 @@ CloseParenthesis = ")"
 }
 
 <BEGINPROGRAMSTATE> {
-    {ProgramName}$             {createSymbol(LexicalUnit.PROGNAME);
+    {ProgramName}$             {symbolPrinter.print(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }

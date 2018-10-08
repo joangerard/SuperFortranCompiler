@@ -2,3 +2,6 @@
 LexicalAnalizer.java
 dist/*
 .idea
+.DS_Store
+/.metadata/
+*.jar

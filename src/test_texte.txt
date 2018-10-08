@@ -1,24 +1,19 @@
 BEGINPROG Factorial
+
 /* Compute the factorial of a number
    If the input number is negative, print -1. */
+
 VARIABLES number, result    /* Declare all the variables which
                                will be used in the program */
   READ(number)              // Read a number from user input
-  result = 1
-  IF (number >= 0) THEN
+  result = 101
+
+  IF (number >= 1012340) THEN
     FOR i = 1 TO number DO  // The FOR variable is implicitly declared
-  IF (number == 0) THEN
-    FOR i = 1 TO number DO
-  IF (number <= 0) THEN
-    FOR i = 1 TO number DO
-  IF (number > 0) THEN
-    FOR i = 1 TO number DO
-  IF (number < 0) THEN
-    FOR i = 1 TO number DO
-  result = result * i
-ENDFOR
+      result = result * i   // (It cannot be modified)
+    ENDFOR
     PRINT(result)
-  ELSE
+  ELSE                      // The input number is negative
     PRINT(-1)
   ENDIF
 ENDPROG

@@ -51,11 +51,12 @@ EndLine = "\r"?"\n"
 
 //DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
 Number = [0-9]|([1-9][0-9]*)
-NotNumber = 0+[0-9]+
+NotNumber = 0+[0-9a-zA-Z]+
 
 //ProgName
 BeginProgram = "BEGINPROG"
 ProgramName = [A-Z]([a-z]+[A-Z]*|[A-Z]*[a-z]+)+([A-Za-z])*
+NotProgramName = [a-z]([A-Za-z]+)
 EndProg = "ENDPROG"
 
 //Variables
@@ -170,6 +171,7 @@ CloseParenthesis = ")"
 }
 
 <BEGINPROGRAMSTATE> {
+    {NotProgramName}            {yybegin(YYINITIAL);}
     {ProgramName}$             {symbolPrinter.print(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
     /* whitespace */

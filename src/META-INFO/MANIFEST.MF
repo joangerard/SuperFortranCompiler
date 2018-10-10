@@ -1,0 +1,4 @@
+Main-Class: LexicalAnalizer
+Class-Path: MyUtils.jar
+Manifest-Version: 1.0
+Created-By: Equipo Rocket

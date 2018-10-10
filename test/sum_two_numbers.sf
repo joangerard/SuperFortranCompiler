@@ -1,7 +1,7 @@
-BEGINPROG sUmtwOnUmBeRs
+BEGINPROG Fac_tofdsa
 /* Compute the factorial of a number
    If the input number is negative, print -1. */
-VARIABLES NUMBER, 0A123, result    // single comment
+VARIABLES kilo5lopPk,11nick_, NUMBER, 0A123, result    // single comment
   READ(NUMBER)              // Read a number from user input
   READ(0A123)              // Read a number from user input
   result = NUMBER + 0A123

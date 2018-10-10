@@ -51,17 +51,25 @@ EndLine = "\r"?"\n"
 
 //DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
 Number = [0-9]|([1-9][0-9]*)
-NotNumber = 0+[0-9a-zA-Z]+
+NumberLetter = [a-zA-Z][0-9]+ | [0-9]+[a-zA-Z]
+AnyChar = ([0-9a-zA-Z])*
+NumberLetterCombination = ({NumberLetter}+ {AnyChar} | {AnyChar}{NumberLetter}+)*
+NotNumber = 0+[0-9]+ | {NumberLetterCombination} | [a-zA-Z]
 
 //ProgName
 BeginProgram = "BEGINPROG"
-ProgramName = [A-Z]([a-z]+[A-Z]*|[A-Z]*[a-z]+)+([A-Za-z])*
-NotProgramName = [a-z]([A-Za-z]+)
+ProgramName = [A-Z]([a-z]+[A-Z0-9]*|[A-Z0-9]*[a-z]+)+([A-Za-z0-9])*
+NotProgramName = [a-z]([A-Za-z0-9]+) | {MixedSpecialChar}
 EndProg = "ENDPROG"
 
 //Variables
 Variables = "VARIABLES"
-VarName = [a-z][a-z0-9_]*
+VarName = [a-z][a-z0-9]*
+SpecialChars = [!@\#$%\^&_:;\"\'\.\?~`\|⁄]
+AnyCharWithSpecialChar = ([a-z0-9]|{SpecialChars})+
+AtLeastOneUppercase = ([A-Z]+{AnyCharWithSpecialChar} | {AnyCharWithSpecialChar}[A-Z]+)+({AnyCharWithSpecialChar}|[A-Z])*
+MixedSpecialChar = ({AnyChar}{SpecialChars}+ | {SpecialChars}+{AnyChar})*
+NotVarName = {MixedSpecialChar} | {AtLeastOneUppercase}
 
 //Operators
 GreaterThan = ">"
@@ -117,6 +125,7 @@ CloseParenthesis = ")"
     {EndProg}                   {symbolPrinter.print(LexicalUnit.ENDPROG, yyline, yycolumn, yytext());}
 
     //Variables
+    {NotVarName}                {}
     {Variables}                 {symbolPrinter.print(LexicalUnit.VARIABLES, yyline, yycolumn, yytext());}
     {VarName}                   {symbolPrinter.print(LexicalUnit.VARNAME, yyline, yycolumn, yytext());
                                 identifierList.add(yytext(), yyline + 1);}

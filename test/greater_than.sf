@@ -1,0 +1,18 @@
+BEGINPROG PrimeNumber
+/* Compute the factorial of a number
+   If the input number is negative, print -1. */
+VARIABLES x,y,result    /* Declare variables X and Y */
+  READ(x)              // Read number a
+  READ(y)              // Read a number from user input
+  IF (x < 0 AND y < 0) THEN
+    PRINT(-1) ELSE
+    IF (x > y) THEN
+    result = a ELSE
+    IF (b > y) THEN
+    result = b ELSE
+    result = -1
+    ENDIF
+    ENDIF
+    ENDIF
+    PRINT(result)
+ENDPROG

@@ -43,8 +43,6 @@ PrinterInterface symbolPrinter = new SymbolPrinter();
 ////////////////////////////////
 
 //-00005.05E-05
-LineTerminator = \r|\n|\r\n
-InputCharacter = [^\r\n]
 WhiteSpace     = [ \t\f]
 
 EndLine = "\r"?"\n"
@@ -96,6 +94,10 @@ Plus = "+"
 Minus = "-"
 Times = "*"
 Divide = "/"
+
+//Binary Operations
+And = "AND"
+Or = "OR"
 
 //Parenthesis
 OpenParenthesis = "("
@@ -156,6 +158,10 @@ CloseParenthesis = ")"
     {Minus}                     {symbolPrinter.print(LexicalUnit.MINUS, yyline, yycolumn, yytext());}
     {Times}                     {symbolPrinter.print(LexicalUnit.TIMES, yyline, yycolumn, yytext());}
     {Divide}                    {symbolPrinter.print(LexicalUnit.DIVIDE, yyline, yycolumn, yytext());}
+
+    //Binary Operations
+    {And}                       {symbolPrinter.print(LexicalUnit.AND, yyline, yycolumn, yytext());}
+    {Or}                        {symbolPrinter.print(LexicalUnit.OR, yyline, yycolumn, yytext());}
 
     //Parenthesis
     {OpenParenthesis}           {symbolPrinter.print(LexicalUnit.LPAREN, yyline, yycolumn, yytext());}

@@ -8,8 +8,8 @@ VARIABLES x,y,result    /* Declare variables X and Y */
     PRINT(-1) ELSE
     IF (x > y) THEN
     result = a ELSE
-    IF (b > y) THEN
-    result = b ELSE
+    IF (y > x) THEN
+    result = y ELSE
     result = -1
     ENDIF
     ENDIF

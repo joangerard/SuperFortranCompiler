@@ -51,10 +51,11 @@ EndLine = "\r"?"\n"
 
 //DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
 Number = [0-9]|([1-9][0-9]*)
-NumberLetter = [a-zA-Z][0-9]+ | [0-9]+[a-zA-Z]
-AnyChar = ([0-9a-zA-Z])*
-NumberLetterCombination = ({NumberLetter}+ {AnyChar} | {AnyChar}{NumberLetter}+)*
-NotNumber = 0+[0-9]+ | {NumberLetterCombination} | [a-zA-Z]
+NumberLetter = [a-zA-Z][0-9]|[0-9][a-zA-Z]|[a-zA-Z][a-zA-Z]
+AnyChar = [0-9a-zA-Z]*
+NumberLetterCombination = {AnyChar}{NumberLetter}+{AnyChar}
+StartWithZero = 0+[0-9]+
+NotNumber = {StartWithZero} | {NumberLetterCombination} | [a-zA-Z]
 
 //ProgName
 BeginProgram = "BEGINPROG"
@@ -65,11 +66,11 @@ EndProg = "ENDPROG"
 //Variables
 Variables = "VARIABLES"
 VarName = [a-z][a-z0-9]*
-SpecialChars = [!@\#$%\^&_:;\"\'\.\?~`\|⁄]
-AnyCharWithSpecialChar = ([a-z0-9]|{SpecialChars})+
-AtLeastOneUppercase = ([A-Z]+{AnyCharWithSpecialChar} | {AnyCharWithSpecialChar}[A-Z]+)+({AnyCharWithSpecialChar}|[A-Z])*
-MixedSpecialChar = ({AnyChar}{SpecialChars}+ | {SpecialChars}+{AnyChar})*
-NotVarName = {MixedSpecialChar} | {AtLeastOneUppercase}
+SpecialChars = [_]
+AtLeastOneUppercase = {AnyChar}[A-Z]+{AnyChar}
+MixedSpecialChar = ({AnyChar}{SpecialChars}+{AnyChar}
+DigitsAtThebegining = [0-9]+{AnyChar}
+NotVarName = {MixedSpecialChar} | {AtLeastOneUppercase} | {DigitsAtThebegining}
 
 //Operators
 GreaterThan = ">"

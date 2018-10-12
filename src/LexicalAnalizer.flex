@@ -68,7 +68,7 @@ Variables = "VARIABLES"
 VarName = [a-z][a-z0-9]*
 SpecialChars = [_]
 AtLeastOneUppercase = {AnyChar}[A-Z]+{AnyChar}
-MixedSpecialChar = ({AnyChar}{SpecialChars}+{AnyChar}
+MixedSpecialChar = {AnyChar}{SpecialChars}+{AnyChar}
 DigitsAtThebegining = [0-9]+{AnyChar}
 NotVarName = {MixedSpecialChar} | {AtLeastOneUppercase} | {DigitsAtThebegining}
 

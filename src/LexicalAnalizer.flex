@@ -49,16 +49,26 @@ EndLine = "\r"?"\n"
 
 //DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
 Number = [0-9]|([1-9][0-9]*)
-NotNumber = 0+[0-9]+
+NumberLetter = [a-zA-Z][0-9]|[0-9][a-zA-Z]|[a-zA-Z][a-zA-Z]
+AnyChar = [0-9a-zA-Z]*
+NumberLetterCombination = {AnyChar}{NumberLetter}+{AnyChar}
+StartWithZero = 0+[0-9]+
+NotNumber = {StartWithZero} | {NumberLetterCombination} | [a-zA-Z]
 
 //ProgName
 BeginProgram = "BEGINPROG"
-ProgramName = [A-Z]([a-z]+[A-Z]*|[A-Z]*[a-z]+)+([A-Za-z])*
+ProgramName = [A-Z]([a-z]+[A-Z0-9]*|[A-Z0-9]*[a-z]+)+([A-Za-z0-9])*
+NotProgramName = [a-z]([A-Za-z0-9]+) | {MixedSpecialChar}
 EndProg = "ENDPROG"
 
 //Variables
 Variables = "VARIABLES"
-VarName = [a-z][a-z0-9_]*
+VarName = [a-z][a-z0-9]*
+SpecialChars = [_]
+AtLeastOneUppercase = {AnyChar}[A-Z]+{AnyChar}
+MixedSpecialChar = {AnyChar}{SpecialChars}+{AnyChar}
+DigitsAtThebegining = [0-9]+{AnyChar}
+NotVarName = {MixedSpecialChar} | {AtLeastOneUppercase} | {DigitsAtThebegining}
 
 //Operators
 GreaterThan = ">"
@@ -118,6 +128,7 @@ CloseParenthesis = ")"
     {EndProg}                   {symbolPrinter.print(LexicalUnit.ENDPROG, yyline, yycolumn, yytext());}
 
     //Variables
+    {NotVarName}                {}
     {Variables}                 {symbolPrinter.print(LexicalUnit.VARIABLES, yyline, yycolumn, yytext());}
     {VarName}                   {symbolPrinter.print(LexicalUnit.VARNAME, yyline, yycolumn, yytext());
                                 identifierList.add(yytext(), yyline + 1);}
@@ -176,6 +187,7 @@ CloseParenthesis = ")"
 }
 
 <BEGINPROGRAMSTATE> {
+    {NotProgramName}            {yybegin(YYINITIAL);}
     {ProgramName}$             {symbolPrinter.print(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
     /* whitespace */

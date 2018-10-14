@@ -12,7 +12,7 @@ sourceSets {
  * Compile jflex task
  */
 task compileJflex(type: Exec) {
-    commandLine 'jflex', 'src/LexicalAnalizer.flex'
+    commandLine 'jflex', 'src/LexicalAnalyzer.flex'
 }<< {
     println "Jflex executed"
 }

@@ -1,11 +1,8 @@
 public class Main{
 
     public static void main(String args[]){
-        
-        System.out.println("Main class");
-
         if (args.length == 0) {
-            System.out.println("Usage : java LexicalAnalizer [ --encoding <name> ] <inputfile(s)>");
+            System.out.println("Usage : java LexicalAnalyzer [ --encoding <name> ] <inputfile(s)>");
         }
         else {
             int firstFilePos = 0;
@@ -21,7 +18,7 @@ public class Main{
                 }
             }
             for (int i = firstFilePos; i < args.length; i++) {
-                LexicalAnalizer scanner = null;
+                LexicalAnalyzer scanner = null;
                 try {
                     java.io.FileInputStream stream = new java.io.FileInputStream(args[i]);
                     java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);

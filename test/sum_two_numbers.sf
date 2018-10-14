@@ -8,6 +8,7 @@ VARIABLES kilo5lopPk,11nick_, NUMBER, 0A123, result    // single comment
   result = 2
   result = 100
   result = 6
+  result = -30
   PRINT(result)
 
 ENDPROG

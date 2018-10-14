@@ -76,6 +76,7 @@ GreaterEqualThan = ">="
 LessThan = "<"
 LessEqualThan = "<="
 Equal = "="
+Assignment = ":="
 Different = "<>"
 Comma = ","
 
@@ -128,7 +129,6 @@ CloseParenthesis = ")"
     {EndProg}                   {symbolPrinter.print(LexicalUnit.ENDPROG, yyline, yycolumn, yytext());}
 
     //Variables
-    {NotVarName}                {}
     {Variables}                 {symbolPrinter.print(LexicalUnit.VARIABLES, yyline, yycolumn, yytext());}
     {VarName}                   {symbolPrinter.print(LexicalUnit.VARNAME, yyline, yycolumn, yytext());
                                 identifierList.add(yytext(), yyline + 1);}
@@ -139,6 +139,7 @@ CloseParenthesis = ")"
     {LessThan}                  {symbolPrinter.print(LexicalUnit.LT, yyline, yycolumn, yytext());}
     {LessEqualThan}             {symbolPrinter.print(LexicalUnit.LEQ, yyline, yycolumn, yytext());}
     {Equal}                     {symbolPrinter.print(LexicalUnit.EQ, yyline, yycolumn, yytext());}
+    {Assignment}                {symbolPrinter.print(LexicalUnit.ASSIGN, yyline, yycolumn, yytext());}
     {Different}                 {symbolPrinter.print(LexicalUnit.NEQ, yyline, yycolumn, yytext());}
     {Comma}                     {symbolPrinter.print(LexicalUnit.COMMA, yyline, yycolumn, yytext());}
 
@@ -180,6 +181,8 @@ CloseParenthesis = ")"
 
     {NotNumber}                 {}
     {Number}                    {symbolPrinter.print(LexicalUnit.NUMBER, yyline, yycolumn, yytext());}
+
+    {NotVarName}                {}
 
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }

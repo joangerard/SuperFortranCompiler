@@ -4,11 +4,11 @@ BEGINPROG Sum_two_numbers
 VARIABLES kilo5lopPk,11nick_, NUMBER, 0A123, result    // single comment
   READ(NUMBER)              // Read a number from user input
   READ(0A123)              // Read a number from user input
-  result = NUMBER + 0A123
-  result = 2
-  result = 100
-  result = 6
-  result = -30
+  result := NUMBER + 0A123
+  result := 2
+  result := 100
+  result := 6
+  result := -30
   PRINT(result)
 
 ENDPROG

@@ -25,7 +25,7 @@ public class Main{
                 try {
                     java.io.FileInputStream stream = new java.io.FileInputStream(args[i]);
                     java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);
-                    scanner = new LexicalAnalizer(reader);
+                    scanner = new LexicalAnalyzer(reader);
                     scanner.yylex();
                 }
                 catch (java.io.FileNotFoundException e) {

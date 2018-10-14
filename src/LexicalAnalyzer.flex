@@ -2,7 +2,7 @@
 
 %%// Options of the scanner
 
-%class          LexicalAnalizer//Name
+%class          LexicalAnalyzer//Name
 %unicode			//Use unicode
 %line				//Use line counter (yyline variable)
 %column			//Use character counter by line (yycolumn variable)
@@ -21,8 +21,6 @@
 ////////
 %init{//code to execute before scanning
     System.out.println("");
-    System.out.println("      LEXICAL ANALIZER   ");
-    System.out.println("___________________________");
 %init}
 
 %{//adding Java code (methods, inner classes, ...)

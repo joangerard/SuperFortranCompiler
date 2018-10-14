@@ -1,6 +1,5 @@
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 public class IdentifierList implements IdentifierListInterface{
     private Map<String, Integer> identifierList;
@@ -17,7 +16,7 @@ public class IdentifierList implements IdentifierListInterface{
         }
     }
 
-    public Map get() {
+    public Map<String,Integer> get() {
         return this.process.execute(this.identifierList);
     }
 

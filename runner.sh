@@ -3,8 +3,8 @@
 if [ $# -gt 0 ]
 then 
     
-    jflex src/LexicalAnalizer.flex
-    javac -cp src src/LexicalAnalizer.java
+    jflex src/LexicalAnalyzer.flex
+    javac -cp src src/LexicalAnalyzer.java
     cd src
     jar cvmf META-INFO/MANIFEST.MF part1.jar *.class
     mv part1.jar ../dist/part1.jar

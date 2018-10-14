@@ -4,7 +4,7 @@ BEGINPROG PairRecognizer
 
 VARIABLES n, total
   READ(n)              // Read The amount of numbers you want to sum.
-  total = 0          // Initialize total variable to be 0
+  total := 0          // Initialize total variable to be 0
 
   /* 
   Sum up all the i inputs 
@@ -12,7 +12,7 @@ VARIABLES n, total
    */
   WHILE ( n > 0 )
     READ(i)
-    total = total + i
+    total := total + i
   ENDWHILE
   PRINT (total)
 ENDPROG

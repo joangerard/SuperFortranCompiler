@@ -7,10 +7,10 @@ VARIABLES x,y,result    /* Declare variables X and Y */
   IF (x < 0 AND y < 0) THEN
     PRINT(-1) ELSE
     IF (x > y) THEN
-    result = x ELSE
+    result := x ELSE
     IF (y > x) THEN
-    result = y ELSE
-    result = -1
+    result := y ELSE
+    result := -1
     ENDIF
     ENDIF
     ENDIF

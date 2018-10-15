@@ -47,15 +47,13 @@ EndLine = "\r"?"\n"
 
 //DecimalNumber = [-+]?[0-9]*(\.[0-9]+E[+-][0-9]+)?
 Number = [0-9]|([1-9][0-9]*)
-NumberLetter = [a-zA-Z][0-9]|[0-9][a-zA-Z]|[a-zA-Z][a-zA-Z]
 AnyChar = [0-9a-zA-Z]*
-NumberLetterCombination = {AnyChar}{NumberLetter}+{AnyChar}
 StartWithZero = 0+[0-9]+
-NotNumber = {StartWithZero} | {NumberLetterCombination} | [a-zA-Z]
+NotNumber = {StartWithZero}
 
 //ProgName
 BeginProgram = "BEGINPROG"
-ProgramName = [A-Z]([a-z]+[A-Z0-9]*|[A-Z0-9]*[a-z]+)+([A-Za-z0-9])*
+ProgramName = [A-Z]{AnyChar}[a-z]+{AnyChar}
 NotProgramName = [a-z]([A-Za-z0-9]+) | {MixedSpecialChar}
 EndProg = "ENDPROG"
 
@@ -189,7 +187,7 @@ CloseParenthesis = ")"
 
 <BEGINPROGRAMSTATE> {
     {NotProgramName}            {yybegin(YYINITIAL);}
-    {ProgramName}$             {symbolPrinter.print(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
+    {ProgramName}$              {symbolPrinter.print(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }

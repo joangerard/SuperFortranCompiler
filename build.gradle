@@ -41,7 +41,7 @@ javadoc {
 task compileJflex(type: Exec) {
     println 'Init Jflex execution'
     workingDir 'src'
-    commandLine 'jflex', 'LexicalAnalizer.flex'
+    commandLine 'jflex', 'LexicalAnalyzer.flex'
 }<< {
     println "Jflex executed"
 }

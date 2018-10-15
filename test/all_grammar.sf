@@ -3,7 +3,7 @@ BEGINPROG AllGrammar
 /* This program contains all symbols/
 keywords it does not do anything */
 
-VARIABLES result, someothervar; 
+VARIABLES result, someothervar 
   READ(result)              // comment
   result := 101
 

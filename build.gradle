@@ -1,5 +1,11 @@
 println 'Init build'
-apply plugin: 'java'
+apply plugin: 'java' // Adding java plugin for gradle
+
+
+
+archivesBaseName = 'part1' // Name of jar
+libsDirName = '../dist' // Directory to put jar in
+buildDir = 'src' // Directory for all generated code
 
 /**
  * Set sources directory for all java code
@@ -8,11 +14,34 @@ sourceSets {
     main.java.srcDir "src"
 }
 
+
 /**
- * Compile jflex task
+ * Attributes for Jar's Manifest
+ */
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'Main'
+        )
+    }
+}
+
+/**
+ * Specify source and class path for javadoc
+ */
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+
+/**
+ * Generate lexer using jflex
  */
 task compileJflex(type: Exec) {
-    commandLine 'jflex', 'src/LexicalAnalizer.flex'
+    println 'Init Jflex execution'
+    workingDir 'src'
+    commandLine 'jflex', 'LexicalAnalizer.flex'
 }<< {
     println "Jflex executed"
 }
@@ -24,21 +53,24 @@ compileJava {
     dependsOn compileJflex
 }
 
-archivesBaseName = 'part1' // Name of jar
-libsDirName = '../dist' // Directory to put jar on
-buildDir = 'src' // Directory for all generated code
 
-jar {
-    manifest {
-        attributes(
-                'Main-Class': 'Main'
-        )
-    }
+/**
+ * Generate java documentation in doc folder
+ */
+task generateJavadocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    destinationDir = new File("doc")
 }
 
-// gradle runJar -PtestFile=helloTestFile
+/**
+ * Once the build is done generate Java docs
+ */
+build.finalizedBy(generateJavadocs)
 
 
+/**
+ * Run jar based on a given argument
+ */
 task run() << {
     println "$testFile"
 
@@ -47,3 +79,9 @@ task run() << {
         args = ["dist/part1.jar", "test/$testFile"]
     }
 }
+
+//task serveJavaDoc(type: Exec){
+//    workingDir 'doc'
+//    commandLine 'python', '-m', 'SimpleHTTPServer'
+//}
+

@@ -1,7 +1,7 @@
 //import java_cup.runtime.*; uncommet if you use CUP
+import utils.errorhandling.*;
 
 %%// Options of the scanner
-
 %class          LexicalAnalyzer//Name
 %unicode			//Use unicode
 %line				//Use line counter (yyline variable)
@@ -27,13 +27,16 @@
 ProcessInterface process = new MapOrder();
 IdentifierListInterface identifierList = new IdentifierList(process);
 PrinterInterface symbolPrinter = new SymbolPrinter();
-
+ErrorHandlerInterface errorHandler = new ErrorHandler();
+ErrorPrinter errorPrinter = new ErrorPrinter(errorHandler);
 %}
 
 %eof{//code to execute after scanning
    System.out.println(""); 
    System.out.println("Identifiers");
    System.out.println(identifierList.toString());
+
+    errorPrinter.print();
 %eof}
 
 ////////////////////////////////
@@ -175,10 +178,10 @@ CloseParenthesis = ")"
     {OpenParenthesis}           {symbolPrinter.print(LexicalUnit.LPAREN, yyline, yycolumn, yytext());}
     {CloseParenthesis}          {symbolPrinter.print(LexicalUnit.RPAREN, yyline, yycolumn, yytext());}
 
-    {NotNumber}                 {}
+    {NotNumber}                 {errorHandler.addError(ErrorList.SYNTAX_ERROR_NUMBER, yyline, yycolumn, yytext());}
     {Number}                    {symbolPrinter.print(LexicalUnit.NUMBER, yyline, yycolumn, yytext());}
 
-    {NotVarName}                {}
+    {NotVarName}                {errorHandler.addError(ErrorList.SYNTAX_ERROR_VARNAME, yyline, yycolumn, yytext());}
 
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }
@@ -186,7 +189,8 @@ CloseParenthesis = ")"
 }
 
 <BEGINPROGRAMSTATE> {
-    {NotProgramName}            {yybegin(YYINITIAL);}
+    {NotProgramName}            {errorHandler.addError(ErrorList.SYNTAX_ERROR_PROGNAME, yyline, yycolumn, yytext());
+                                yybegin(YYINITIAL);}
     {ProgramName}$              {symbolPrinter.print(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
     /* whitespace */

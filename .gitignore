@@ -1,5 +1,5 @@
 *.class
-LexicalAnalizer.java
+LexicalAnalyzer.java
 dist/*
 .idea
 .DS_Store

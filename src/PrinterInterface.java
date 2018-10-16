@@ -1,4 +1,10 @@
+/**
+ * Responsible to show information.
+ */
 public interface PrinterInterface
 {
-    public void print(LexicalUnit lexicalUnit, int line, int column, String value);
+	/**
+	 * Responsible to show information.
+	 */
+    public void print();
 }

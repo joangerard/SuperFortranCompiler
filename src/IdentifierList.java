@@ -7,15 +7,15 @@ import java.util.Map;
 public class IdentifierList implements IdentifierListInterface{
 
     private Map<String, Integer> identifierList; // HashMap list to store all identifiers
-    private ProcessInterface process;
+    private MapOrderInterface mapOrder;
 
     /**
      *
-     * @param process Map order object that implements ProcessInterface
+     * @param mapOrder Map order object that implements ProcessInterface
      */
-    public IdentifierList(ProcessInterface process) {
+    public IdentifierList(MapOrderInterface mapOrder) {
         this.identifierList = new HashMap<String, Integer>();
-        this.process = process;
+        this.mapOrder = mapOrder;
     }
 
     /**
@@ -31,7 +31,7 @@ public class IdentifierList implements IdentifierListInterface{
      * {@inheritDoc}
      */
     public Map<String,Integer> get() {
-        return this.process.execute(this.identifierList);
+        return this.mapOrder.execute(this.identifierList);
     }
 
     /**

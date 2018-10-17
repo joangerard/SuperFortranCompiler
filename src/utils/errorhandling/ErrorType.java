@@ -1,6 +1,8 @@
 package utils.errorhandling;
-
-public enum ErrorList
+/**
+ * Responsible to handle error type.
+ */
+public enum ErrorType
 {
     SYNTAX_ERROR_VARNAME,
     SYNTAX_ERROR_NUMBER,

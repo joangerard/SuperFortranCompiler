@@ -26,12 +26,15 @@ import utils.errorhandling.*;
 %{//adding Java code (methods, inner classes, ...)
 ProcessInterface process = new MapOrder();
 IdentifierListInterface identifierList = new IdentifierList(process);
-PrinterInterface symbolPrinter = new SymbolPrinter();
 ErrorHandlerInterface errorHandler = new ErrorHandler();
 ErrorPrinter errorPrinter = new ErrorPrinter(errorHandler);
+TokenizerInterface tokenizer = new Tokenizer();
+PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);
+
 %}
 
 %eof{//code to execute after scanning
+   tokenPrinter.print();
    System.out.println(""); 
    System.out.println("Identifiers");
    System.out.println(identifierList.toString());
@@ -123,65 +126,65 @@ CloseParenthesis = ")"
 
 <YYINITIAL> {
     //ProgName
-    {BeginProgram}              {symbolPrinter.print(LexicalUnit.BEGINPROG, yyline, yycolumn, yytext());
+    {BeginProgram}              {tokenizer.addToken(LexicalUnit.BEGINPROG, yyline, yycolumn, yytext());
                                     yybegin(BEGINPROGRAMSTATE);}
-    {EndProg}                   {symbolPrinter.print(LexicalUnit.ENDPROG, yyline, yycolumn, yytext());}
+    {EndProg}                   {tokenizer.addToken(LexicalUnit.ENDPROG, yyline, yycolumn, yytext());}
 
     //Variables
-    {Variables}                 {symbolPrinter.print(LexicalUnit.VARIABLES, yyline, yycolumn, yytext());}
-    {VarName}                   {symbolPrinter.print(LexicalUnit.VARNAME, yyline, yycolumn, yytext());
+    {Variables}                 {tokenizer.addToken(LexicalUnit.VARIABLES, yyline, yycolumn, yytext());}
+    {VarName}                   {tokenizer.addToken(LexicalUnit.VARNAME, yyline, yycolumn, yytext());
                                 identifierList.add(yytext(), yyline + 1);}
 
     //Operators
-    {GreaterThan}               {symbolPrinter.print(LexicalUnit.GT, yyline, yycolumn, yytext());}
-    {GreaterEqualThan}          {symbolPrinter.print(LexicalUnit.GEQ, yyline, yycolumn, yytext());}
-    {LessThan}                  {symbolPrinter.print(LexicalUnit.LT, yyline, yycolumn, yytext());}
-    {LessEqualThan}             {symbolPrinter.print(LexicalUnit.LEQ, yyline, yycolumn, yytext());}
-    {Equal}                     {symbolPrinter.print(LexicalUnit.EQ, yyline, yycolumn, yytext());}
-    {Assignment}                {symbolPrinter.print(LexicalUnit.ASSIGN, yyline, yycolumn, yytext());}
-    {Different}                 {symbolPrinter.print(LexicalUnit.NEQ, yyline, yycolumn, yytext());}
-    {Comma}                     {symbolPrinter.print(LexicalUnit.COMMA, yyline, yycolumn, yytext());}
+    {GreaterThan}               {tokenizer.addToken(LexicalUnit.GT, yyline, yycolumn, yytext());}
+    {GreaterEqualThan}          {tokenizer.addToken(LexicalUnit.GEQ, yyline, yycolumn, yytext());}
+    {LessThan}                  {tokenizer.addToken(LexicalUnit.LT, yyline, yycolumn, yytext());}
+    {LessEqualThan}             {tokenizer.addToken(LexicalUnit.LEQ, yyline, yycolumn, yytext());}
+    {Equal}                     {tokenizer.addToken(LexicalUnit.EQ, yyline, yycolumn, yytext());}
+    {Assignment}                {tokenizer.addToken(LexicalUnit.ASSIGN, yyline, yycolumn, yytext());}
+    {Different}                 {tokenizer.addToken(LexicalUnit.NEQ, yyline, yycolumn, yytext());}
+    {Comma}                     {tokenizer.addToken(LexicalUnit.COMMA, yyline, yycolumn, yytext());}
 
     //Comment
     {LongCommentInit}           {yybegin(LONGCOMMENTSTATE);}
     {ShortComment}              {yybegin(SHORTCOMMENTSTATE);}
 
     //EndLine
-    {EndLine}                   {symbolPrinter.print(LexicalUnit.ENDLINE, yyline, yycolumn,"\\n");}
+    {EndLine}                   {tokenizer.addToken(LexicalUnit.ENDLINE, yyline, yycolumn,"\\n");}
 
     //Instructions
-    {If}                        {symbolPrinter.print(LexicalUnit.IF, yyline, yycolumn, yytext());}
-    {While}                     {symbolPrinter.print(LexicalUnit.WHILE, yyline, yycolumn, yytext());}
-    {Do}                        {symbolPrinter.print(LexicalUnit.DO, yyline, yycolumn, yytext());}
-    {EndWhile}                  {symbolPrinter.print(LexicalUnit.ENDWHILE, yyline, yycolumn, yytext());}
-    {For}                       {symbolPrinter.print(LexicalUnit.FOR, yyline, yycolumn, yytext());}
-    {To}                        {symbolPrinter.print(LexicalUnit.TO, yyline, yycolumn, yytext());}
-    {EndFor}                    {symbolPrinter.print(LexicalUnit.ENDFOR, yyline, yycolumn, yytext());}
-    {Print}                     {symbolPrinter.print(LexicalUnit.PRINT, yyline, yycolumn, yytext());}
-    {Read}                      {symbolPrinter.print(LexicalUnit.READ, yyline, yycolumn, yytext());}
-    {Then}                      {symbolPrinter.print(LexicalUnit.THEN, yyline, yycolumn, yytext());}
-    {EndIf}                     {symbolPrinter.print(LexicalUnit.ENDIF, yyline, yycolumn, yytext());}
-    {Else}                      {symbolPrinter.print(LexicalUnit.ELSE, yyline, yycolumn, yytext());}
-    {Not}                       {symbolPrinter.print(LexicalUnit.NOT, yyline, yycolumn, yytext());}
+    {If}                        {tokenizer.addToken(LexicalUnit.IF, yyline, yycolumn, yytext());}
+    {While}                     {tokenizer.addToken(LexicalUnit.WHILE, yyline, yycolumn, yytext());}
+    {Do}                        {tokenizer.addToken(LexicalUnit.DO, yyline, yycolumn, yytext());}
+    {EndWhile}                  {tokenizer.addToken(LexicalUnit.ENDWHILE, yyline, yycolumn, yytext());}
+    {For}                       {tokenizer.addToken(LexicalUnit.FOR, yyline, yycolumn, yytext());}
+    {To}                        {tokenizer.addToken(LexicalUnit.TO, yyline, yycolumn, yytext());}
+    {EndFor}                    {tokenizer.addToken(LexicalUnit.ENDFOR, yyline, yycolumn, yytext());}
+    {Print}                     {tokenizer.addToken(LexicalUnit.PRINT, yyline, yycolumn, yytext());}
+    {Read}                      {tokenizer.addToken(LexicalUnit.READ, yyline, yycolumn, yytext());}
+    {Then}                      {tokenizer.addToken(LexicalUnit.THEN, yyline, yycolumn, yytext());}
+    {EndIf}                     {tokenizer.addToken(LexicalUnit.ENDIF, yyline, yycolumn, yytext());}
+    {Else}                      {tokenizer.addToken(LexicalUnit.ELSE, yyline, yycolumn, yytext());}
+    {Not}                       {tokenizer.addToken(LexicalUnit.NOT, yyline, yycolumn, yytext());}
     
     //Operations
-    {Plus}                      {symbolPrinter.print(LexicalUnit.PLUS, yyline, yycolumn, yytext());}
-    {Minus}                     {symbolPrinter.print(LexicalUnit.MINUS, yyline, yycolumn, yytext());}
-    {Times}                     {symbolPrinter.print(LexicalUnit.TIMES, yyline, yycolumn, yytext());}
-    {Divide}                    {symbolPrinter.print(LexicalUnit.DIVIDE, yyline, yycolumn, yytext());}
+    {Plus}                      {tokenizer.addToken(LexicalUnit.PLUS, yyline, yycolumn, yytext());}
+    {Minus}                     {tokenizer.addToken(LexicalUnit.MINUS, yyline, yycolumn, yytext());}
+    {Times}                     {tokenizer.addToken(LexicalUnit.TIMES, yyline, yycolumn, yytext());}
+    {Divide}                    {tokenizer.addToken(LexicalUnit.DIVIDE, yyline, yycolumn, yytext());}
 
     //Binary Operations
-    {And}                       {symbolPrinter.print(LexicalUnit.AND, yyline, yycolumn, yytext());}
-    {Or}                        {symbolPrinter.print(LexicalUnit.OR, yyline, yycolumn, yytext());}
+    {And}                       {tokenizer.addToken(LexicalUnit.AND, yyline, yycolumn, yytext());}
+    {Or}                        {tokenizer.addToken(LexicalUnit.OR, yyline, yycolumn, yytext());}
 
     //Parenthesis
-    {OpenParenthesis}           {symbolPrinter.print(LexicalUnit.LPAREN, yyline, yycolumn, yytext());}
-    {CloseParenthesis}          {symbolPrinter.print(LexicalUnit.RPAREN, yyline, yycolumn, yytext());}
+    {OpenParenthesis}           {tokenizer.addToken(LexicalUnit.LPAREN, yyline, yycolumn, yytext());}
+    {CloseParenthesis}          {tokenizer.addToken(LexicalUnit.RPAREN, yyline, yycolumn, yytext());}
 
-    {NotNumber}                 {errorHandler.addError(ErrorList.SYNTAX_ERROR_NUMBER, yyline, yycolumn, yytext());}
-    {Number}                    {symbolPrinter.print(LexicalUnit.NUMBER, yyline, yycolumn, yytext());}
+    {NotNumber}                 {errorHandler.addError(ErrorType.SYNTAX_ERROR_NUMBER, yyline, yycolumn, yytext());}
+    {Number}                    {tokenizer.addToken(LexicalUnit.NUMBER, yyline, yycolumn, yytext());}
 
-    {NotVarName}                {errorHandler.addError(ErrorList.SYNTAX_ERROR_VARNAME, yyline, yycolumn, yytext());}
+    {NotVarName}                {errorHandler.addError(ErrorType.SYNTAX_ERROR_VARNAME, yyline, yycolumn, yytext());}
 
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }
@@ -189,9 +192,9 @@ CloseParenthesis = ")"
 }
 
 <BEGINPROGRAMSTATE> {
-    {NotProgramName}            {errorHandler.addError(ErrorList.SYNTAX_ERROR_PROGNAME, yyline, yycolumn, yytext());
+    {NotProgramName}            {errorHandler.addError(ErrorType.SYNTAX_ERROR_PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
-    {ProgramName}$              {symbolPrinter.print(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
+    {ProgramName}$              {tokenizer.addToken(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }

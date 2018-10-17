@@ -7,3 +7,6 @@ dist/*
 *.jar
 *.classpath
 *.project
+.gradle
+src/tmp/*
+doc/*

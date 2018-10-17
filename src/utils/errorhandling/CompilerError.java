@@ -1,13 +1,23 @@
 package utils.errorhandling;
-
+/**
+ * Responsible to handle compile error information.
+ */
 public class CompilerError
 {
-    ErrorList errorType;
+    ErrorType errorType;
     int line;
     int column;
     Object value;
 
-    public CompilerError(ErrorList errorType, int line, int column, Object value)
+    /**
+     * Constructor.
+     * 
+     * @param errorType What kind of error is it? Program name, Variable Name, etc.
+     * @param line      Error line in the code.
+     * @param column    Error column in the code.
+     * @param value     Value of the input which triggers the error.
+     */
+    public CompilerError(ErrorType errorType, int line, int column, Object value)
     {
         this.errorType = errorType;
         this.line = line+1;
@@ -15,26 +25,41 @@ public class CompilerError
         this.value = value;
     }
 
-    public ErrorList getErrorType()
+    /**
+     * @return Error type
+     */
+    public ErrorType getErrorType()
     {
         return this.errorType;
     }
 
+    /**
+     * @return Error line
+     */
     public int getLine()
     {
         return this.line;
     }
 
+    /**
+     * @return Error column
+     */
     public int getColumn()
     {
         return this.column;
     }
 
+    /**
+     * @return Value of the input which triggers error.
+     */
     public Object getValue()
     {
         return this.value;
     }
 
+    /**
+     * @return Error message based on the error type.
+     */
     public String getErrorMessage()
     {
         switch(this.getErrorType()) {

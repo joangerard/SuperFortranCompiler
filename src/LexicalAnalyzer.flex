@@ -2,6 +2,7 @@
 import utils.errorhandling.*;
 
 %%// Options of the scanner
+
 %class          LexicalAnalyzer//Name
 %unicode			//Use unicode
 %line				//Use line counter (yyline variable)

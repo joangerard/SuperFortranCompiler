@@ -9,7 +9,7 @@ public class Tokenizer implements TokenizerInterface
     List tokens;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public Tokenizer()
     {
@@ -17,7 +17,7 @@ public class Tokenizer implements TokenizerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public void addToken(LexicalUnit unit,int line,int column,Object value)
     {
@@ -26,7 +26,7 @@ public class Tokenizer implements TokenizerInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public List getTokens()
     {

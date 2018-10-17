@@ -11,7 +11,7 @@ VARIABLES result, someothervar
     result := result * 50
     result := result - 50
     result := result / 50
-    other := 100;
+    other := 100
     PRINT(result) ELSE
     PRINT(result)
   ENDIF

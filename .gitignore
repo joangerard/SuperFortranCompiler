@@ -9,3 +9,4 @@ dist/*
 *.project
 .gradle
 src/tmp/*
+doc/*

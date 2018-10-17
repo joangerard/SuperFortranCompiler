@@ -15,7 +15,7 @@ public class TokenPrinter implements PrinterInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public void print() {
         List tokens = this.tokenizer.getTokens();

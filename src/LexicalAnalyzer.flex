@@ -1,4 +1,5 @@
 //import java_cup.runtime.*; uncommet if you use CUP
+import utils.errorhandling.*;
 
 %%// Options of the scanner
 
@@ -26,6 +27,8 @@
 %{//adding Java code (methods, inner classes, ...)
 ProcessInterface process = new MapOrder();
 IdentifierListInterface identifierList = new IdentifierList(process);
+ErrorHandlerInterface errorHandler = new ErrorHandler();
+ErrorPrinter errorPrinter = new ErrorPrinter(errorHandler);
 TokenizerInterface tokenizer = new Tokenizer();
 PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);
 
@@ -36,6 +39,8 @@ PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);
    System.out.println(""); 
    System.out.println("Identifiers");
    System.out.println(identifierList.toString());
+
+    errorPrinter.print();
 %eof}
 
 ////////////////////////////////
@@ -177,10 +182,10 @@ CloseParenthesis = ")"
     {OpenParenthesis}           {tokenizer.addToken(LexicalUnit.LPAREN, yyline, yycolumn, yytext());}
     {CloseParenthesis}          {tokenizer.addToken(LexicalUnit.RPAREN, yyline, yycolumn, yytext());}
 
-    {NotNumber}                 {}
+    {NotNumber}                 {errorHandler.addError(ErrorType.SYNTAX_ERROR_NUMBER, yyline, yycolumn, yytext());}
     {Number}                    {tokenizer.addToken(LexicalUnit.NUMBER, yyline, yycolumn, yytext());}
 
-    {NotVarName}                {}
+    {NotVarName}                {errorHandler.addError(ErrorType.SYNTAX_ERROR_VARNAME, yyline, yycolumn, yytext());}
 
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }
@@ -188,7 +193,8 @@ CloseParenthesis = ")"
 }
 
 <BEGINPROGRAMSTATE> {
-    {NotProgramName}            {yybegin(YYINITIAL);}
+    {NotProgramName}            {errorHandler.addError(ErrorType.SYNTAX_ERROR_PROGNAME, yyline, yycolumn, yytext());
+                                yybegin(YYINITIAL);}
     {ProgramName}$              {tokenizer.addToken(LexicalUnit.PROGNAME, yyline, yycolumn, yytext());
                                 yybegin(YYINITIAL);}
     /* whitespace */

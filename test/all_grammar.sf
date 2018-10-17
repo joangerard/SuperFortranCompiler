@@ -1,9 +1,9 @@
-BEGINPROG allGrammar
+BEGINPROG AllGrammar
 
 /* This program contains all symbols/
 keywords it does not do anything */
 
-VARIABLES resultA, someothervar 
+VARIABLES result, someothervar 
   READ(result)              // comment
   result := 101
 

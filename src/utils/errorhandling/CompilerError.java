@@ -69,7 +69,8 @@ public class CompilerError
                 return "SYNTAX ERROR NUMBER: "+this.value.toString()+" is not well defined. Please check line: "+this.line+" column: "+ this.column;
             case SYNTAX_ERROR_PROGNAME:
                 return "SYNTAX ERROR PROGNAME: "+this.value.toString()+" is not well defined. Please check line: "+this.line+" column: "+ this.column;
+            default:
+                return "";
         }
-        return "";
     }
 }

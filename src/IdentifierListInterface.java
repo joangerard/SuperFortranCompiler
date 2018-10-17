@@ -14,6 +14,7 @@ public interface IdentifierListInterface
 
     /**
      * Returns identifier list sorted in ascending order
+     * @return list of identifiers
      */
     Map<String,Integer> get();
 }

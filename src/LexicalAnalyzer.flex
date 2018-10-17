@@ -16,6 +16,8 @@
 //                          2. Symbol(int id,int line, int column,Object value)
 %standalone
 
+%function execute
+
 ////////
 //CODE//
 ////////
@@ -24,7 +26,7 @@
 %init}
 
 %{//adding Java code (methods, inner classes, ...)
-ProcessInterface process = new MapOrder();
+MapOrderInterface process = new MapOrder();
 IdentifierListInterface identifierList = new IdentifierList(process);
 TokenizerInterface tokenizer = new Tokenizer();
 PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);

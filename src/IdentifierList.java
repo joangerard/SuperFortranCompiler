@@ -1,24 +1,25 @@
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is responsible for listing identifiers
+ */
 public class IdentifierList implements IdentifierListInterface{
 
     private Map<String, Integer> identifierList; // HashMap list to store all identifiers
     private ProcessInterface process;
 
     /**
-     * Constructor
-     * @param process Map order class that implements ProcessInterface
+     *
+     * @param process Map order object that implements ProcessInterface
      */
     public IdentifierList(ProcessInterface process) {
-        this.identifierList = new HashMap<>();
+        this.identifierList = new HashMap<String, Integer>();
         this.process = process;
     }
 
     /**
-     * Adds variable and line number to identifier list Map as long as the variable name does not exists in the list
-     * @param varName Variable name
-     * @param lineNumber Line number in which the variable appears for the first time
+     * {@inheritDoc}
      */
     public void add(String varName, int lineNumber) {
         if (this.identifierList.get(varName) == null) {
@@ -27,7 +28,7 @@ public class IdentifierList implements IdentifierListInterface{
     }
 
     /**
-     * Returns identifier list sorted in ascending order
+     * {@inheritDoc}
      */
     public Map<String,Integer> get() {
         return this.process.execute(this.identifierList);
@@ -39,13 +40,13 @@ public class IdentifierList implements IdentifierListInterface{
      */
     @Override
     public String toString() {
-        String value = "";
+        StringBuilder value = new StringBuilder();
         this.identifierList = get();
 
         for (Map.Entry<String,Integer> entry : this.identifierList.entrySet()) {
-            value += entry.getKey() + "\t" + entry.getValue() + "\n";
+            value.append(entry.getKey()).append("\t").append(entry.getValue()).append("\n");
         }
 
-        return value;
+        return value.toString();
     }
 }

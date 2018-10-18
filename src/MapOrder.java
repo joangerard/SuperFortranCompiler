@@ -7,7 +7,9 @@ import java.util.TreeMap;
 public class MapOrder implements MapOrderInterface
 {
     /**
-     * {@inheritDoc}
+     * Returns Map object sorted in ascending order
+     * @param map Map object to be sorted
+     * @return Sorted Map Object
      */
     public Map<String,Integer> execute(Map<String,Integer> map) {
         return new TreeMap<String, Integer>(map);

@@ -6,9 +6,9 @@ import java.util.Map;
 public interface MapOrderInterface
 {
     /**
-     * Returns Map object sorted in ascending order
+     * Executes a process
      * @param value Map object to be sorted
-     * @return Sorted Map Object
+     * @return Map Object
      */
     public Map<String,Integer> execute(Map<String,Integer> value);
 }

@@ -1,0 +1,18 @@
+BEGINPROG PairRecognizer
+
+// Given a number n, read n times a number and sum up.
+
+VARIABLES n, total
+  READ(n)              // Read The amount of numbers you want to sum.
+  total := 0          // Initialize total variable to be 0
+
+  /* 
+  Sum up all the i inputs 
+  while decreasing n until 0
+   */
+  WHILE ( n > 0 )
+    READ(i)
+    total := total + i
+  ENDWHILE
+  PRINT (total)
+ENDPROG

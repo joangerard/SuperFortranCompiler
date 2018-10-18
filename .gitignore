@@ -1,4 +1,12 @@
 *.class
-LexicalAnalizer.java
+LexicalAnalyzer.java
 dist/*
 .idea
+.DS_Store
+/.metadata/
+*.jar
+*.classpath
+*.project
+.gradle
+src/tmp/*
+doc/*

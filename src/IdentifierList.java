@@ -28,7 +28,8 @@ public class IdentifierList implements IdentifierListInterface{
     }
 
     /**
-     * {@inheritDoc}
+     * Returns identifier list sorted in ascending order
+     * @return list of identifiers
      */
     public Map<String,Integer> get() {
         return this.mapOrder.execute(this.identifierList);

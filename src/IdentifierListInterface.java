@@ -13,8 +13,7 @@ public interface IdentifierListInterface
     void add(String varName, int lineNumber);
 
     /**
-     * Returns identifier list sorted in ascending order
-     * @return list of identifiers
+     * Returns identifier list
      */
     Map<String,Integer> get();
 }

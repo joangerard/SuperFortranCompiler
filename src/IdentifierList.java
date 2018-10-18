@@ -19,7 +19,9 @@ public class IdentifierList implements IdentifierListInterface{
     }
 
     /**
-     * {@inheritDoc}
+     * Adds variable and line number to identifier list Map as long as the variable name does not exists in the list
+     * @param varName The corresponding variable name to be added to the list
+     * @param lineNumber The corresponding line number in which the variable appears for the first time
      */
     public void add(String varName, int lineNumber) {
         if (this.identifierList.get(varName) == null) {

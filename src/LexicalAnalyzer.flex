@@ -17,6 +17,8 @@ import utils.errorhandling.*;
 //                          2. Symbol(int id,int line, int column,Object value)
 %standalone
 
+%function execute
+
 ////////
 //CODE//
 ////////
@@ -25,7 +27,7 @@ import utils.errorhandling.*;
 %init}
 
 %{//adding Java code (methods, inner classes, ...)
-ProcessInterface process = new MapOrder();
+MapOrderInterface process = new MapOrder();
 IdentifierListInterface identifierList = new IdentifierList(process);
 ErrorHandlerInterface errorHandler = new ErrorHandler();
 ErrorPrinter errorPrinter = new ErrorPrinter(errorHandler);

@@ -23,7 +23,7 @@ public class Main{
                     java.io.FileInputStream stream = new java.io.FileInputStream(args[i]);
                     java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);
                     scanner = new LexicalAnalyzer(reader);
-                    scanner.yylex();
+                    scanner.execute();
                 }
                 catch (java.io.FileNotFoundException e) {
                     System.out.println("File not found : \""+args[i]+"\"");

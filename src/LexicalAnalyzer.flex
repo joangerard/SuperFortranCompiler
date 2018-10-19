@@ -38,6 +38,7 @@ PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);
 
 %eof{//code to execute after scanning
    tokenPrinter.print();
+   System.out.println(LexicalUnit.EOS);
    System.out.println(""); 
    System.out.println("Identifiers");
    System.out.println(identifierList.toString());

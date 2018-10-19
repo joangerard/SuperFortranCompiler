@@ -13,7 +13,7 @@ public interface IdentifierListInterface
     void add(String varName, int lineNumber);
 
     /**
-     * Returns identifier list
+     * @return hash of identifiers.
      */
     Map<String,Integer> get();
 }

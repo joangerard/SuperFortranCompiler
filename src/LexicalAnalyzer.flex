@@ -63,7 +63,7 @@ NotNumber = {StartWithZero}
 //ProgName
 BeginProgram = "BEGINPROG"
 ProgramName = [A-Z]{AnyChar}[a-z]+{AnyChar}
-NotProgramName = [a-z]([A-Za-z0-9]+) | {MixedSpecialChar}
+NotProgramName = [a-z]([A-Za-z0-9]+) | {MixedSpecialChar} | [A-Z0-9]+
 EndProg = "ENDPROG"
 
 //Variables

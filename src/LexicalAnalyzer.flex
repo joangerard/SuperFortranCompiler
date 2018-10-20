@@ -192,7 +192,7 @@ CloseParenthesis = ")"
 
     /* whitespace */
     {WhiteSpace}                { /* ignore */ }
-    .                           {}
+    .                           {errorHandler.addError(ErrorType.SYNTAX_ERROR_NOT_RECOGNIZED_CHARACTER, yyline, yycolumn, yytext());}
 }
 
 <BEGINPROGRAMSTATE> {

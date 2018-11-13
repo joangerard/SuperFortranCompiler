@@ -6,14 +6,14 @@ import java.util.List;
  */
 public class Tokenizer implements TokenizerInterface
 {
-    List tokens;
+    private List<Symbol> tokens;
 
     /**
      * {@inheritDoc}
      */
     public Tokenizer()
     {
-        this.tokens = new ArrayList();
+        this.tokens = new ArrayList<Symbol>();
     }
 
     /**
@@ -28,7 +28,7 @@ public class Tokenizer implements TokenizerInterface
     /**
      * {@inheritDoc}
      */
-    public List getTokens()
+    public List<Symbol> getTokens()
     {
         return this.tokens;
     }

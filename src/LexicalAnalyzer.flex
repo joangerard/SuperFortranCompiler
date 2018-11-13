@@ -1,5 +1,6 @@
 //import java_cup.runtime.*; uncommet if you use CUP
 import utils.errorhandling.*;
+import java.util.List;
 
 %%// Options of the scanner
 
@@ -33,6 +34,9 @@ ErrorHandlerInterface errorHandler = new ErrorHandler();
 ErrorPrinter errorPrinter = new ErrorPrinter(errorHandler);
 TokenizerInterface tokenizer = new Tokenizer();
 PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);
+public List<Symbol> getTokens(){
+return tokenizer.getTokens();
+}
 
 %}
 

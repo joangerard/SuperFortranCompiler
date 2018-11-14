@@ -88,7 +88,19 @@ public class CompilerError {
             case SYNTAX_ERROR_NOT_RECOGNIZED_CHARACTER:
                 return "SYNTAX ERROR NOT RECOGNIZED CHAR: " + this.value.toString() + " not recognized. Please check line: " + this.line + " column: " + this.column;
             case SYNTAX_ERROR:
-                return "SYNTAX ERROR NEAR: " + "line: " + this.line + " column: " + this.column + " Got: " +this.value.toString() + "Instead of: " + this.expectedValue;
+                return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + ". Got " +this.value.toString() + " instead of " + this.expectedValue + ".";
+            case SYNTAX_ERROR_EXTRA_PAR:
+                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra parenthesis.";
+            case SYNTAX_ERROR_MULT:
+                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra multiplication symbol.";
+            case SYNTAX_ERROR_DIVIDE:
+                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra divide symbol.";
+            case SYNTAX_ERROR_MINUS:
+                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra minus symbol.";
+            case SYNTAX_ERROR_SUM:
+                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra plus symbol.";
+            case SYNTAX_ERROR_UNEXPECTED_CHAR:
+                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Unexpected char {" + this.value +"}.";
             default:
                 return "";
         }

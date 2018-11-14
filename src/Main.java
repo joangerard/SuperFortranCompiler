@@ -26,13 +26,14 @@ public class Main{
                     java.io.Reader reader = new java.io.InputStreamReader(stream, encodingName);
                     scanner = new LexicalAnalyzer(reader);
                     scanner.execute();
-                    List<Symbol> tokens = scanner.getTokens();
-                    SyntaxChecker syntaxChecker = new SyntaxChecker(tokens);
-                    syntaxChecker.run();
-                    if(!syntaxChecker.isSyntaxCorrect()){
-                        System.out.println(syntaxChecker.getError().getErrorMessage());
+                    if (!scanner.gotAnyError()) {
+                        List<Symbol> tokens = scanner.getTokens();
+                        SyntaxChecker syntaxChecker = new SyntaxChecker(tokens);
+                        syntaxChecker.run();
+                        if (!syntaxChecker.isSyntaxCorrect()) {
+                            System.out.println(syntaxChecker.getError().getErrorMessage());
+                        }
                     }
-
                 }
                 catch (java.io.FileNotFoundException e) {
                     System.out.println("File not found : \""+args[i]+"\"");

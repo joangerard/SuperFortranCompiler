@@ -35,9 +35,11 @@ ErrorPrinter errorPrinter = new ErrorPrinter(errorHandler);
 TokenizerInterface tokenizer = new Tokenizer();
 PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);
 public List<Symbol> getTokens(){
-return tokenizer.getTokens();
+    return tokenizer.getTokens();
 }
-
+public Boolean gotAnyError() {
+    return errorHandler.getErrors().size() > 0;
+}
 %}
 
 %eof{//code to execute after scanning

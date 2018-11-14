@@ -3,7 +3,12 @@ BEGINPROG PairRecognizer
 // Given a number n, read n times a number and sum up.
 
 
-VARIABLES n total
-  READ(n)
+VARIABLES n, total
+  n := 3 + 4 - 10
+
+  IF (3>=5) THEN
+    READ(n)
+    READ(n)
+  ENDIF
 
 ENDPROG

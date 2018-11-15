@@ -208,10 +208,74 @@ public class SyntaxChecker {
                 case IF:
                     this.ifVariable();
                     return;
+                case WHILE:
+                    this.whileVariable();
+                    return;
+                case FOR:
+                    this.forVariable();
+                    return;
+                case PRINT:
+                    this.print();
+                    return;
                 default:
                     this.stopExecutionAndNotifyUser(this.getToken(), null);
             }
 
+        }
+    }
+
+    private void whileVariable() {
+        if (this.shouldContinue) {
+            this.match(LexicalUnit.WHILE, this.getToken().getType());
+            this.match(LexicalUnit.LPAREN, this.getToken().getType());
+            this.cond();
+            this.match(LexicalUnit.RPAREN, this.getToken().getType());
+            this.match(LexicalUnit.DO, this.getToken().getType());
+            this.skipEndLines();
+            this.code();
+            this.match(LexicalUnit.ENDWHILE, this.getToken().getType());
+        }
+    }
+
+    private void forVariable() {
+        if (this.shouldContinue) {
+            this.match(LexicalUnit.FOR, this.getToken().getType());
+            this.match(LexicalUnit.VARNAME, this.getToken().getType());
+            this.match(LexicalUnit.ASSIGN, this.getToken().getType());
+            this.exprArith();
+            this.match(LexicalUnit.TO, this.getToken().getType());
+            this.exprArith();
+            this.match(LexicalUnit.DO, this.getToken().getType());
+            this.skipEndLines();
+            this.code();
+            this.match(LexicalUnit.FOR, this.getToken().getType());
+        }
+    }
+
+    private void print() {
+        if (this.shouldContinue) {
+            this.match(LexicalUnit.PRINT, this.getToken().getType());
+            this.match(LexicalUnit.LPAREN, this.getToken().getType());
+            this.expList();
+            this.match(LexicalUnit.RPAREN, this.getToken().getType());
+        }
+    }
+
+    private void expList() {
+        if (this.shouldContinue) {
+            this.exprArith();
+            this.match(LexicalUnit.COMMA, this.getToken().getType());
+            this.expListTail();
+        }
+    }
+
+    private void expListTail() {
+        if (this.shouldContinue) {
+            switch (this.getToken().getType()) {
+                case RPAREN:
+                    return;
+            }
+            this.expList();
         }
     }
 

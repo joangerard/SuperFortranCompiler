@@ -100,7 +100,7 @@ public class CompilerError {
             case SYNTAX_ERROR_SUM:
                 return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra plus symbol.";
             case SYNTAX_ERROR_UNEXPECTED_CHAR:
-                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Unexpected char {" + this.value +"}.";
+                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Unexpected value {" + this.value +"}.";
             default:
                 return "";
         }

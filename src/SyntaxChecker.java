@@ -67,7 +67,7 @@ public class SyntaxChecker {
 
     }
 
-    private void stopExecutionAndNotifyUser(Symbol token, LexicalUnit expectedType){
+    private void stopExecutionAndNotifyUser(Symbol token, LexicalUnit expectedType) {
         this.shouldContinue = false;
         this.error = createErrorMessage(token, expectedType);
     }
@@ -125,7 +125,7 @@ public class SyntaxChecker {
     private void idTail() {
         if (this.shouldContinue) {
             Symbol token = this.getToken();
-            switch (token.getType()){
+            switch (token.getType()) {
                 case VARNAME:
                     this.match(LexicalUnit.VARNAME, this.getToken().getType());
                     return;
@@ -168,7 +168,7 @@ public class SyntaxChecker {
     private void varListTail() {
         if (this.shouldContinue) {
             Symbol token = this.getToken();
-            switch(token.getType()){
+            switch (token.getType()) {
                 case ENDLINE:
                 case RPAREN:
                     return;
@@ -264,7 +264,6 @@ public class SyntaxChecker {
     private void expList() {
         if (this.shouldContinue) {
             this.exprArith();
-            this.match(LexicalUnit.COMMA, this.getToken().getType());
             this.expListTail();
         }
     }
@@ -275,6 +274,7 @@ public class SyntaxChecker {
                 case RPAREN:
                     return;
             }
+            this.match(LexicalUnit.COMMA, this.getToken().getType());
             this.expList();
         }
     }
@@ -341,8 +341,7 @@ public class SyntaxChecker {
             if (this.getToken().getType() == LexicalUnit.NOT) {
                 this.match(LexicalUnit.NOT, this.getToken().getType());
                 this.simpleCond();
-            }
-            else {
+            } else {
                 this.simpleCond();
             }
 
@@ -375,8 +374,8 @@ public class SyntaxChecker {
                 case LT:
                     this.match(LexicalUnit.LT, this.getToken().getType());
                     return;
-                case NOT:
-                    this.match(LexicalUnit.NOT, this.getToken().getType());
+                case NEQ:
+                    this.match(LexicalUnit.NEQ, this.getToken().getType());
                     return;
                 default:
                     this.stopExecutionAndNotifyUser(this.getToken(), null);
@@ -431,7 +430,7 @@ public class SyntaxChecker {
                 case GT:
                 case LEQ:
                 case LT:
-                case NOT:
+                case NEQ:
                 case DO:
                 case TO:
                 case COMMA:
@@ -469,7 +468,7 @@ public class SyntaxChecker {
                 case GT:
                 case LEQ:
                 case LT:
-                case NOT:
+                case NEQ:
                 case DO:
                 case TO:
                 case COMMA:
@@ -494,19 +493,19 @@ public class SyntaxChecker {
         this.program();
     }
 
-    public boolean isSyntaxCorrect(){
+    public boolean isSyntaxCorrect() {
         return this.shouldContinue;
     }
 
-    public CompilerError getError(){
+    public CompilerError getError() {
         return this.error;
     }
 
-    private void skipToken(){
+    private void skipToken() {
         this.tokenIndex++;
     }
 
-    private void skipEndLines(){
+    private void skipEndLines() {
 
         while (this.getToken().getType() == LexicalUnit.ENDLINE){
             this.skipToken();

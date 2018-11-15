@@ -11,8 +11,7 @@ VARIABLES n, total
     READ(n)
   ENDIF
 
-  WHILE (NOT 3<=5 AND 4 > 6 OR 4 <> n) DO
-    PRINT(n)
-  ENDWHILE
+  WHILE (NOT 3<=5 + 4 + 6 OR 4 <> n) DO
+    PRINT(n,5,3)
 
-ENDPROG
+

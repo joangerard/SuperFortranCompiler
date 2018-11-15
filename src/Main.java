@@ -27,8 +27,9 @@ public class Main{
                     scanner = new LexicalAnalyzer(reader);
                     scanner.execute();
                     if (!scanner.gotAnyError()) {
+                        List<String> lines = FileReaderHandler.readFile(args[i]);
                         List<Symbol> tokens = scanner.getTokens();
-                        SyntaxChecker syntaxChecker = new SyntaxChecker(tokens);
+                        SyntaxChecker syntaxChecker = new SyntaxChecker(tokens, lines);
                         syntaxChecker.run();
                         if (!syntaxChecker.isSyntaxCorrect()) {
                             System.out.println(syntaxChecker.getError().getErrorMessage());
@@ -49,4 +50,6 @@ public class Main{
             }
         }
     }
+
+
 }

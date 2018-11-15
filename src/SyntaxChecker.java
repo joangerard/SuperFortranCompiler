@@ -10,12 +10,14 @@ public class SyntaxChecker {
     private ParseTree parseTree;
     private Boolean shouldContinue;
     private CompilerError error;
+    private List<String> lines;
 
-    public SyntaxChecker(List<Symbol> tokens) {
+    public SyntaxChecker(List<Symbol> tokens, List<String> lines) {
         this.tokens = tokens;
         this.tokenIndex = 0;
         this.shouldContinue = true;
         this.error = new CompilerError();
+        this.lines = lines;
     }
 
     private Symbol getToken() {
@@ -79,8 +81,8 @@ public class SyntaxChecker {
                 Symbol token = this.getToken();
                 this.error = createErrorMessage(token, expectedType);
             }
+            this.tokenIndex++;
         }
-        this.tokenIndex++;
     }
 
     private void program() {
@@ -91,6 +93,7 @@ public class SyntaxChecker {
             this.variables();
             this.code();
             this.match(LexicalUnit.ENDPROG, this.getToken().getType());
+
         }
 
     }
@@ -248,7 +251,7 @@ public class SyntaxChecker {
             this.match(LexicalUnit.DO, this.getToken().getType());
             this.skipEndLines();
             this.code();
-            this.match(LexicalUnit.FOR, this.getToken().getType());
+            this.match(LexicalUnit.ENDFOR, this.getToken().getType());
         }
     }
 
@@ -507,9 +510,13 @@ public class SyntaxChecker {
 
     private void skipEndLines() {
 
-        while (this.getToken().getType() == LexicalUnit.ENDLINE){
+        while (this.shouldSkipTokens()) {
             this.skipToken();
         }
+    }
+
+    private boolean shouldSkipTokens() {
+        return this.shouldContinue && this.tokenIndex < this.tokens.size() && this.getToken().getType() == LexicalUnit.ENDLINE;
     }
 
 }

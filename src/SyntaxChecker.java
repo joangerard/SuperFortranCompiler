@@ -1,6 +1,7 @@
 import utils.errorhandling.CompilerError;
 import utils.errorhandling.ErrorType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SyntaxChecker {
@@ -11,6 +12,7 @@ public class SyntaxChecker {
     private Boolean shouldContinue;
     private CompilerError error;
     private List<String> lines;
+    private List<Rule> derivationRules;
 
     public SyntaxChecker(List<Symbol> tokens, List<String> lines) {
         this.tokens = tokens;
@@ -18,6 +20,7 @@ public class SyntaxChecker {
         this.shouldContinue = true;
         this.error = new CompilerError();
         this.lines = lines;
+        this.derivationRules = new ArrayList<Rule>();
     }
 
     private Symbol getToken() {
@@ -87,6 +90,7 @@ public class SyntaxChecker {
 
     private void program() {
         if (this.shouldContinue) {
+            derivationRules.add(new Rule(1, "Program", this.getToken()));
             this.match(LexicalUnit.BEGINPROG, this.getToken().getType());
             this.match(LexicalUnit.PROGNAME, this.getToken().getType());
             this.skipEndLines();
@@ -105,17 +109,21 @@ public class SyntaxChecker {
 
             switch (token.getType()) {
                 case VARNAME:
+                    this.derivationRules.add(new Rule(24, "Id",  this.getToken()));
                     this.match(LexicalUnit.VARNAME, this.getToken().getType());
                     break;
                 case NUMBER:
+                    this.derivationRules.add(new Rule(25, "Id",  this.getToken()));
                     this.match(LexicalUnit.NUMBER, this.getToken().getType());
                     break;
                 case LPAREN:
+                    this.derivationRules.add(new Rule(26, "Id",  this.getToken()));
                     this.match(LexicalUnit.LPAREN, this.getToken().getType());
                     this.exprArith();
                     this.match(LexicalUnit.RPAREN, this.getToken().getType());
                     break;
                 case MINUS:
+                    this.derivationRules.add(new Rule(27, "Id",  this.getToken()));
                     this.match(LexicalUnit.MINUS, this.getToken().getType());
                     this.idTail();
                     break;
@@ -130,9 +138,11 @@ public class SyntaxChecker {
             Symbol token = this.getToken();
             switch (token.getType()) {
                 case VARNAME:
+                    this.derivationRules.add(new Rule(28, "IdTail",  this.getToken()));
                     this.match(LexicalUnit.VARNAME, this.getToken().getType());
                     return;
                 case NUMBER:
+                    this.derivationRules.add(new Rule(29, "IdTail",  this.getToken()));
                     this.match(LexicalUnit.NUMBER, this.getToken().getType());
                     return;
                 default:
@@ -152,8 +162,10 @@ public class SyntaxChecker {
                 case FOR:
                 case PRINT:
                 case READ:
+                    this.derivationRules.add(new Rule(3, "Variables",  this.getToken()));
                     return;
             }
+            this.derivationRules.add(new Rule(2, "Variables",  this.getToken()));
             this.match(LexicalUnit.VARIABLES, this.getToken().getType());
             this.varList();
             this.skipEndLines();
@@ -163,6 +175,7 @@ public class SyntaxChecker {
 
     private void varList() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(4, "VarList",  this.getToken()));
             this.match(LexicalUnit.VARNAME, this.getToken().getType());
             this.varListTail();
         }
@@ -174,8 +187,10 @@ public class SyntaxChecker {
             switch (token.getType()) {
                 case ENDLINE:
                 case RPAREN:
+                    this.derivationRules.add(new Rule(6, "Variables",  this.getToken()));
                     return;
             }
+            this.derivationRules.add(new Rule(5, "VarListTail",  this.getToken()));
             this.match(LexicalUnit.COMMA, this.getToken().getType());
             this.varList();
         }
@@ -190,9 +205,11 @@ public class SyntaxChecker {
                 case ENDIF:
                 case ELSE:
                 case ENDFOR:
+                    this.derivationRules.add(new Rule(8, "Code",  this.getToken()));
                     return;
             }
 
+            this.derivationRules.add(new Rule(7, "Code",  this.getToken()));
             this.instruction();
             this.skipEndLines();
             this.code();
@@ -203,21 +220,27 @@ public class SyntaxChecker {
         if (this.shouldContinue) {
             switch (this.getToken().getType()) {
                 case READ:
+                    this.derivationRules.add(new Rule(14, "Instruction",  this.getToken()));
                     this.read();
                     return;
                 case VARNAME:
+                    this.derivationRules.add(new Rule(9, "Instruction",  this.getToken()));
                     this.assign();
                     return;
                 case IF:
+                    this.derivationRules.add(new Rule(10, "Instruction",  this.getToken()));
                     this.ifVariable();
                     return;
                 case WHILE:
+                    this.derivationRules.add(new Rule(11, "Instruction",  this.getToken()));
                     this.whileVariable();
                     return;
                 case FOR:
+                    this.derivationRules.add(new Rule(12, "Instruction",  this.getToken()));
                     this.forVariable();
                     return;
                 case PRINT:
+                    this.derivationRules.add(new Rule(13, "Instruction",  this.getToken()));
                     this.print();
                     return;
                 default:
@@ -229,6 +252,7 @@ public class SyntaxChecker {
 
     private void whileVariable() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(48, "While",  this.getToken()));
             this.match(LexicalUnit.WHILE, this.getToken().getType());
             this.match(LexicalUnit.LPAREN, this.getToken().getType());
             this.cond();
@@ -242,6 +266,7 @@ public class SyntaxChecker {
 
     private void forVariable() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(49, "For",  this.getToken()));
             this.match(LexicalUnit.FOR, this.getToken().getType());
             this.match(LexicalUnit.VARNAME, this.getToken().getType());
             this.match(LexicalUnit.ASSIGN, this.getToken().getType());
@@ -257,6 +282,7 @@ public class SyntaxChecker {
 
     private void print() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(50, "Print",  this.getToken()));
             this.match(LexicalUnit.PRINT, this.getToken().getType());
             this.match(LexicalUnit.LPAREN, this.getToken().getType());
             this.expList();
@@ -266,6 +292,7 @@ public class SyntaxChecker {
 
     private void expList() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(52, "ExpList",  this.getToken()));
             this.exprArith();
             this.expListTail();
         }
@@ -275,8 +302,10 @@ public class SyntaxChecker {
         if (this.shouldContinue) {
             switch (this.getToken().getType()) {
                 case RPAREN:
+                    this.derivationRules.add(new Rule(54, "ExpListTail",  this.getToken()));
                     return;
             }
+            this.derivationRules.add(new Rule(53, "ExpListTail",  this.getToken()));
             this.match(LexicalUnit.COMMA, this.getToken().getType());
             this.expList();
         }
@@ -284,6 +313,7 @@ public class SyntaxChecker {
 
     private void ifVariable() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(30, "If",  this.getToken()));
             this.match(LexicalUnit.IF, this.getToken().getType());
             this.match(LexicalUnit.LPAREN, this.getToken().getType());
             this.cond();
@@ -299,9 +329,11 @@ public class SyntaxChecker {
         if (this.shouldContinue) {
             switch (this.getToken().getType()) {
                 case ENDIF:
+                    this.derivationRules.add(new Rule(31, "IfTail",  this.getToken()));
                     this.match(LexicalUnit.ENDIF, this.getToken().getType());
                     return;
                 case ELSE:
+                    this.derivationRules.add(new Rule(32, "IfTail",  this.getToken()));
                     this.match(LexicalUnit.ELSE, this.getToken().getType());
                     this.skipEndLines();
                     this.code();
@@ -315,6 +347,7 @@ public class SyntaxChecker {
 
     private void cond() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(33, "Cond",  this.getToken()));
             this.condAnd();
             this.condA();
         }
@@ -324,8 +357,10 @@ public class SyntaxChecker {
         if (this.shouldContinue) {
             switch (this.getToken().getType()) {
                 case RPAREN:
+                    this.derivationRules.add(new Rule(35, "CondA",  this.getToken()));
                     return;
             }
+            this.derivationRules.add(new Rule(34, "Or",  this.getToken()));
             this.match(LexicalUnit.OR, this.getToken().getType());
             this.condAnd();
             this.condA();
@@ -334,6 +369,7 @@ public class SyntaxChecker {
 
     private void condAnd() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(36, "CondAnd",  this.getToken()));
             this.condFinal();
             this.condAndA();
         }
@@ -342,9 +378,11 @@ public class SyntaxChecker {
     private void condFinal() {
         if (this.shouldContinue) {
             if (this.getToken().getType() == LexicalUnit.NOT) {
+                this.derivationRules.add(new Rule(39, "CondFinal",  this.getToken()));
                 this.match(LexicalUnit.NOT, this.getToken().getType());
                 this.simpleCond();
             } else {
+                this.derivationRules.add(new Rule(40, "CondFinal",  this.getToken()));
                 this.simpleCond();
             }
 
@@ -353,6 +391,7 @@ public class SyntaxChecker {
 
     private void simpleCond() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(41, "SimpleCond",  this.getToken()));
             this.exprArith();
             this.comp();
             this.exprArith();
@@ -363,21 +402,27 @@ public class SyntaxChecker {
         if (this.shouldContinue) {
             switch (this.getToken().getType()) {
                 case EQ:
+                    this.derivationRules.add(new Rule(42, "Comp",  this.getToken()));
                     this.match(LexicalUnit.EQ, this.getToken().getType());
                     return;
                 case GEQ:
+                    this.derivationRules.add(new Rule(43, "Comp",  this.getToken()));
                     this.match(LexicalUnit.GEQ, this.getToken().getType());
                     return;
                 case GT:
+                    this.derivationRules.add(new Rule(44, "Comp",  this.getToken()));
                     this.match(LexicalUnit.GT, this.getToken().getType());
                     return;
                 case LEQ:
+                    this.derivationRules.add(new Rule(45, "Comp",  this.getToken()));
                     this.match(LexicalUnit.LEQ, this.getToken().getType());
                     return;
                 case LT:
+                    this.derivationRules.add(new Rule(46, "Comp",  this.getToken()));
                     this.match(LexicalUnit.LT, this.getToken().getType());
                     return;
                 case NEQ:
+                    this.derivationRules.add(new Rule(47, "Comp",  this.getToken()));
                     this.match(LexicalUnit.NEQ, this.getToken().getType());
                     return;
                 default:
@@ -391,8 +436,10 @@ public class SyntaxChecker {
             switch (this.getToken().getType()) {
                 case RPAREN:
                 case OR:
+                    this.derivationRules.add(new Rule(38, "CondAndA",  this.getToken()));
                     return;
             }
+            this.derivationRules.add(new Rule(37, "CondAndA",  this.getToken()));
             this.match(LexicalUnit.AND, this.getToken().getType());
             this.condFinal();
             this.condAndA();
@@ -401,6 +448,7 @@ public class SyntaxChecker {
 
     private void assign() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(15, "Assign",  this.getToken()));
             this.match(LexicalUnit.VARNAME, this.getToken().getType());
             this.match(LexicalUnit.ASSIGN, this.getToken().getType());
             this.exprArith();
@@ -409,6 +457,7 @@ public class SyntaxChecker {
 
     private void read() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(51, "Read",  this.getToken()));
             this.match(LexicalUnit.READ, this.getToken().getType());
             this.match(LexicalUnit.LPAREN, this.getToken().getType());
             this.varList();
@@ -418,6 +467,7 @@ public class SyntaxChecker {
 
     private void exprArith() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(16, "ExprArith",  this.getToken()));
             this.exprMult();
             this.exprArithA();
         }
@@ -437,13 +487,16 @@ public class SyntaxChecker {
                 case DO:
                 case TO:
                 case COMMA:
+                    this.derivationRules.add(new Rule(19, "ExprArithA",  this.getToken()));
                     return;
                 case PLUS:
+                    this.derivationRules.add(new Rule(17, "ExprArithA",  this.getToken()));
                     this.match(LexicalUnit.PLUS, this.getToken().getType());
                     this.exprMult();
                     this.exprArithA();
                     return;
                 case MINUS:
+                    this.derivationRules.add(new Rule(18, "ExprArithA",  this.getToken()));
                     this.match(LexicalUnit.MINUS, this.getToken().getType());
                     this.exprMult();
                     this.exprArithA();
@@ -454,6 +507,7 @@ public class SyntaxChecker {
 
     private void exprMult() {
         if (this.shouldContinue) {
+            this.derivationRules.add(new Rule(20, "ExprMult",  this.getToken()));
             this.id();
             this.exprMultA();
         }
@@ -475,13 +529,16 @@ public class SyntaxChecker {
                 case DO:
                 case TO:
                 case COMMA:
+                    this.derivationRules.add(new Rule(23, "ExprMultA",  this.getToken()));
                     return;
                 case TIMES:
+                    this.derivationRules.add(new Rule(21, "ExprMultA",  this.getToken()));
                     this.match(LexicalUnit.TIMES, this.getToken().getType());
                     this.id();
                     this.exprMultA();
                     return;
                 case DIVIDE:
+                    this.derivationRules.add(new Rule(22, "ExprMultA",  this.getToken()));
                     this.match(LexicalUnit.DIVIDE, this.getToken().getType());
                     this.id();
                     this.exprMultA();
@@ -489,6 +546,12 @@ public class SyntaxChecker {
 
             }
 
+        }
+    }
+
+    public void showDerivationRules() {
+        for (Rule rule: derivationRules) {
+            System.out.println(rule.toString());
         }
     }
 

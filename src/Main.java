@@ -33,6 +33,10 @@ public class Main{
                         syntaxChecker.run();
                         if (!syntaxChecker.isSyntaxCorrect()) {
                             System.out.println(syntaxChecker.getError().getErrorMessage());
+                        } else {
+                            //TODO: ADD -v Command
+                            System.out.println("Derivation rules: ");
+                            syntaxChecker.showDerivationRules();
                         }
                     }
                 }

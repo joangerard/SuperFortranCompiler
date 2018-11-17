@@ -30,7 +30,10 @@ public class Main{
                         List<String> lines = FileReaderHandler.readFile(args[i]);
                         List<Symbol> tokens = scanner.getTokens();
                         SyntaxChecker syntaxChecker = new SyntaxChecker(tokens, lines);
-                        syntaxChecker.run();
+                        System.out.println("Parse Tree");
+                        ParseTree parseTree = syntaxChecker.getParseTree();
+                        System.out.println(parseTree.toTeX());
+
                         if (!syntaxChecker.isSyntaxCorrect()) {
                             System.out.println(syntaxChecker.getError().getErrorMessage());
                         } else {

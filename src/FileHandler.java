@@ -1,9 +1,9 @@
-import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FileReaderHandler {
+public class FileHandler {
 
     public static List<String> readFile(String fileName) throws IOException {
         BufferedReader br = new BufferedReader(new java.io.FileReader(fileName));
@@ -25,5 +25,17 @@ public class FileReaderHandler {
             br.close();
         }
         return lines;
+    }
+
+    public static void writeInFile(String content, String filename) {
+
+        try (OutputStreamWriter writer =
+                     new OutputStreamWriter(new FileOutputStream(filename), StandardCharsets.UTF_8)) {
+            writer.write(content);
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
     }
 }

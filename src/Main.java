@@ -27,19 +27,19 @@ public class Main{
                     scanner = new LexicalAnalyzer(reader);
                     scanner.execute();
                     if (!scanner.gotAnyError()) {
-                        List<String> lines = FileReaderHandler.readFile(args[i]);
+                        List<String> lines = FileHandler.readFile(args[i]);
                         List<Symbol> tokens = scanner.getTokens();
-                        SyntaxChecker syntaxChecker = new SyntaxChecker(tokens, lines);
-                        System.out.println("Parse Tree");
+                        SymbolMapperInterface symbolMapper = new SymbolMapper();
+                        SyntaxChecker syntaxChecker = new SyntaxChecker(tokens, lines, symbolMapper);
                         ParseTree parseTree = syntaxChecker.getParseTree();
-                        System.out.println(parseTree.toTeX());
+                        //FileHandler.writeInFile(parseTree.toLaTeX(),"parser_tree.tex");
 
                         if (!syntaxChecker.isSyntaxCorrect()) {
                             System.out.println(syntaxChecker.getError().getErrorMessage());
                         } else {
                             //TODO: ADD -v Command
                             System.out.println("Derivation rules: ");
-                            syntaxChecker.showDerivationRules();
+                            //syntaxChecker.showDerivationRules();
                         }
                     }
                 }

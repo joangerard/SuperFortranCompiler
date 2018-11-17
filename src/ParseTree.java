@@ -70,7 +70,13 @@ public class ParseTree {
     public String toTikZ() {
         StringBuilder treeTikZ = new StringBuilder();
         treeTikZ.append("node {");
-        treeTikZ.append(label.toTeX());
+        if (label.isTerminal()) {
+            Singleton.getInstance().counter++;
+            treeTikZ.append("\\colorbox{blue!20}{\\textbf{"+Singleton.getInstance().counter+"} "+label.toTeX()+"}");
+        } else {
+            treeTikZ.append(label.toTeX());
+        }
+
         treeTikZ.append("}\n");
         for (ParseTree child : children) {
             treeTikZ.append("child { ");

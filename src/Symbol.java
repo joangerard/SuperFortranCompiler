@@ -79,7 +79,9 @@ public class Symbol{
 	}
 
 	public String toTeX(){
-		if(this.isTerminal()){
+		if (this.isNonTerminal()){
+			return this.value.toString();
+		}else if(this.isTerminal()){
 			final String value = this.value != null? this.value.toString() : "";
 			final String type  = this.type  != null? this.type.toString()  : "";
 			return type+" \\texttt{"+value+"}";
@@ -90,8 +92,6 @@ public class Symbol{
 		else if (this.isEOS()){
 			return "$\\dashv$";
 		}
-		else {
-			return this.value.toString();
-		}
+		return "";
 	}
 }

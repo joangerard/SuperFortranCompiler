@@ -12,91 +12,65 @@ public class SyntaxChecker {
     private CompilerError error;
     private List<String> lines;
     private List<Rule> derivationRules;
+    private SymbolMapperInterface symbolMapper;
     private final String EPSILON = "EPSILON";
     private final String PROGRAM = "PROGRAM";
     private final String VARIABLES = "VARIABLES";
-    private final String VAR_LIST = "VAR_LIST";
-    private final String VAR_LIST_TAIL = "VAR_LIST_TAIL";
+    private final String VAR_LIST = "VAR-LIST";
+    private final String VAR_LIST_TAIL = "VAR-LIST-TAIL";
     private final String CODE = "CODE";
     private final String INSTRUCTION = "INSTRUCTION";
     private final String ASSIGN = "ASSIGN";
-    private final String EXPR_ARITH = "EXPR_ARITH";
-    private final String EXPR_ARITH_A = "EXPR_ARITH_A";
-    private final String EXPR_MULT = "EXPR_MULT";
-    private final String EXPR_MULT_A = "EXPR_MULT_A";
+    private final String EXPR_ARITH = "EXPR-ARITH";
+    private final String EXPR_ARITH_A = "EXPR-ARITH-A";
+    private final String EXPR_MULT = "EXPR-MULT";
+    private final String EXPR_MULT_A = "EXPR-MULT-A";
     private final String ID = "ID";
-    private final String ID_TAIL = "ID_TAIL";
+    private final String ID_TAIL = "ID-TAIL";
     private final String IF = "IF";
-    private final String IF_TAIL = "IF_TAIL";
+    private final String IF_TAIL = "IF-TAIL";
     private final String COND = "COND";
-    private final String COND_A = "COND_A";
-    private final String COND_AND = "COND_AND";
-    private final String COND_AND_A = "COND_AND_A";
-    private final String COND_FINAL = "COND_FINAL";
-    private final String SIMPLE_COND = "SIMPLE_COND";
+    private final String COND_A = "COND-A";
+    private final String COND_AND = "COND-AND";
+    private final String COND_AND_A = "COND-AND-A";
+    private final String COND_FINAL = "COND-FINAL";
+    private final String SIMPLE_COND = "SIMPLE-COND";
     private final String COMP = "COMP";
     private final String WHILE = "WHILE";
     private final String FOR = "FOR";
     private final String PRINT = "PRINT";
     private final String READ = "READ";
-    private final String EXP_LIST = "EXP_LIST";
-    private final String EXP_LIST_TAIL = "EXP_LIST_TAIL";
+    private final String EXP_LIST = "EXP-LIST";
+    private final String EXP_LIST_TAIL = "EXP-LIST-TAIL";
 
-    public SyntaxChecker(List<Symbol> tokens, List<String> lines) {
+    public SyntaxChecker(List<Symbol> tokens, List<String> lines, SymbolMapperInterface symbolMapper) {
         this.tokens = tokens;
         this.tokenIndex = 0;
         this.shouldContinue = true;
         this.error = new CompilerError();
         this.lines = lines;
         this.derivationRules = new ArrayList<Rule>();
+        this.symbolMapper = symbolMapper;
     }
 
     private Symbol getToken() {
         return this.tokens.get(this.tokenIndex);
     }
 
-
-    private CompilerError initializeErrorMessage(Symbol token, LexicalUnit expectedType, ErrorType errorType) {
+    private CompilerError createErrorMessage(Symbol token, LexicalUnit expectedType) {
         if (expectedType == null) {
             return new CompilerError(
-                    errorType,
+                    ErrorType.SYNTAX_ERROR,
                     token.getLine(),
                     token.getColumn(),
-                    token.getType());
+                    token.getValue());
         }
         return new CompilerError(
-                errorType,
+                ErrorType.SYNTAX_ERROR,
                 token.getLine(),
                 token.getColumn(),
-                token.getType(),
-                expectedType.toString());
-    }
-
-    private CompilerError createErrorMessage(Symbol token, LexicalUnit expectedType) {
-        if (token.getType() == LexicalUnit.LPAREN || token.getType() == LexicalUnit.RPAREN) {
-            return this.initializeErrorMessage(token, expectedType, ErrorType.SYNTAX_ERROR_EXTRA_PAR);
-        }
-
-        if (token.getType() == LexicalUnit.MINUS) {
-            return this.initializeErrorMessage(token, expectedType, ErrorType.SYNTAX_ERROR_MINUS);
-        }
-
-        if (token.getType() == LexicalUnit.PLUS) {
-            return this.initializeErrorMessage(token, expectedType, ErrorType.SYNTAX_ERROR_SUM);
-        }
-        if (token.getType() == LexicalUnit.DIVIDE) {
-            return this.initializeErrorMessage(token, expectedType, ErrorType.SYNTAX_ERROR_DIVIDE);
-        }
-
-        if (token.getType() == LexicalUnit.TIMES) {
-            return this.initializeErrorMessage(token, expectedType, ErrorType.SYNTAX_ERROR_MULT);
-        }
-
-        return new CompilerError(
-                ErrorType.SYNTAX_ERROR_UNEXPECTED_CHAR,
-                token.getLine(),
-                token.getColumn(),
-                token.getValue());
+                token.getValue(),
+                this.symbolMapper.mapSymbolToString(expectedType));
 
     }
 
@@ -123,9 +97,10 @@ public class SyntaxChecker {
                 this.shouldContinue = false;
                 Symbol token = this.getToken();
                 this.error = createErrorMessage(token, expectedType);
+            } else {
+                matchTree = new ParseTree(this.getToken());
+                this.tokenIndex++;
             }
-            matchTree = new ParseTree(this.getToken());
-            this.tokenIndex++;
         }
         return matchTree;
     }
@@ -186,7 +161,7 @@ public class SyntaxChecker {
                     children.add(idTailTree);
                     break;
                 default:
-                    stopExecutionAndNotifyUser(token, null);
+                    this.stopExecutionAndNotifyUser(token, LexicalUnit.VARNAME);
             }
             idTree = new ParseTree(new Symbol(null, ID), children);
 
@@ -210,7 +185,7 @@ public class SyntaxChecker {
                     children.add(numberTree);
                     return new ParseTree(new Symbol(null, ID_TAIL), children);
                 default:
-                    stopExecutionAndNotifyUser(token, null);
+                    this.stopExecutionAndNotifyUser(token, LexicalUnit.VARNAME);
             }
 
         }
@@ -231,7 +206,11 @@ public class SyntaxChecker {
                 case PRINT:
                 case READ:
                     this.derivationRules.add(new Rule(3, "Variables",  this.getToken()));
-                    return new ParseTree(new Symbol(null, EPSILON));
+                    ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
+                    children.add(epsilonTree);
+                    ParseTree parseTree = new ParseTree(new Symbol(null, VARIABLES), children);
+
+                    return parseTree;
             }
             this.derivationRules.add(new Rule(2, "Variables",  this.getToken()));
             ParseTree variablesTree1 = this.matchTree(LexicalUnit.VARIABLES, this.getToken().getType());
@@ -291,7 +270,9 @@ public class SyntaxChecker {
                 case ELSE:
                 case ENDFOR:
                     this.derivationRules.add(new Rule(8, "Code",  this.getToken()));
-                    return new ParseTree(new Symbol(null, EPSILON));
+                    ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
+                    children.add(epsilonTree);
+                    return new ParseTree(new Symbol(null, CODE), children);
             }
 
             this.derivationRules.add(new Rule(7, "Code",  this.getToken()));
@@ -340,7 +321,7 @@ public class SyntaxChecker {
                     children.add(printTree);
                     return new ParseTree(new Symbol(null, PRINT), children);
                 default:
-                    this.stopExecutionAndNotifyUser(this.getToken(), null);
+                    this.stopExecutionAndNotifyUser(this.getToken(), LexicalUnit.WHILE);
             }
 
         }
@@ -440,7 +421,9 @@ public class SyntaxChecker {
             switch (this.getToken().getType()) {
                 case RPAREN:
                     this.derivationRules.add(new Rule(54, "ExpListTail",  this.getToken()));
-                    return new ParseTree(new Symbol(null, EPSILON));
+                    ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
+                    children.add(epsilonTree);
+                    return new ParseTree(new Symbol(null, EXP_LIST_TAIL), children);
 
             }
             this.derivationRules.add(new Rule(53, "ExpListTail",  this.getToken()));
@@ -498,7 +481,7 @@ public class SyntaxChecker {
                     children.add(endIfTree1);
                     return new ParseTree(new Symbol(null, IF_TAIL), children);
                 default:
-                    this.stopExecutionAndNotifyUser(this.getToken(), null);
+                    this.stopExecutionAndNotifyUser(this.getToken(), LexicalUnit.ENDIF);
             }
         }
         return null;
@@ -526,7 +509,9 @@ public class SyntaxChecker {
             switch (this.getToken().getType()) {
                 case RPAREN:
                     this.derivationRules.add(new Rule(35, "CondA",  this.getToken()));
-                    return new ParseTree(new Symbol(null, EPSILON));
+                    ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
+                    children.add(epsilonTree);
+                    return new ParseTree(new Symbol(null, COND_A), children);
             }
             this.derivationRules.add(new Rule(34, "Or",  this.getToken()));
             ParseTree orTree = this.matchTree(LexicalUnit.OR, this.getToken().getType());
@@ -625,7 +610,7 @@ public class SyntaxChecker {
                     children.add(neqTree);
                     return new ParseTree(new Symbol(null, COMP), children);
                 default:
-                    this.stopExecutionAndNotifyUser(this.getToken(), null);
+                    this.stopExecutionAndNotifyUser(this.getToken(), LexicalUnit.EQ);
             }
         }
         return null;
@@ -639,7 +624,9 @@ public class SyntaxChecker {
                 case RPAREN:
                 case OR:
                     this.derivationRules.add(new Rule(38, "CondAndA",  this.getToken()));
-                    return new ParseTree(new Symbol(null, EPSILON));
+                    ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
+                    children.add(epsilonTree);
+                    return new ParseTree(new Symbol(null, COND_AND_A), children);
             }
             this.derivationRules.add(new Rule(37, "CondAndA",  this.getToken()));
             ParseTree andTree = this.matchTree(LexicalUnit.AND, this.getToken().getType());
@@ -715,9 +702,13 @@ public class SyntaxChecker {
                 case NEQ:
                 case DO:
                 case TO:
+                case AND:
+                case OR:
                 case COMMA:
                     this.derivationRules.add(new Rule(19, "ExprArithA",  this.getToken()));
-                    return new ParseTree(new Symbol(null, EPSILON));
+                    ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
+                    children.add(epsilonTree);
+                    return new ParseTree(new Symbol(null, EXPR_ARITH_A), children);
                 case PLUS:
                     this.derivationRules.add(new Rule(17, "ExprArithA",  this.getToken()));
                     ParseTree plusTree = this.matchTree(LexicalUnit.PLUS, this.getToken().getType());
@@ -771,9 +762,13 @@ public class SyntaxChecker {
                 case NEQ:
                 case DO:
                 case TO:
+                case AND:
+                case OR:
                 case COMMA:
                     this.derivationRules.add(new Rule(23, "ExprMultA",  this.getToken()));
-                    return new ParseTree(new Symbol(null, EPSILON));
+                    ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
+                    children.add(epsilonTree);
+                    return new ParseTree(new Symbol(null, EXPR_MULT_A), children);
                 case TIMES:
                     this.derivationRules.add(new Rule(21, "ExprMultA",  this.getToken()));
                     ParseTree timesTree = this.matchTree(LexicalUnit.TIMES, this.getToken().getType());

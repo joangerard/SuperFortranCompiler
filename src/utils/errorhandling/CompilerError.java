@@ -88,7 +88,11 @@ public class CompilerError {
             case SYNTAX_ERROR_NOT_RECOGNIZED_CHARACTER:
                 return "SYNTAX ERROR NOT RECOGNIZED CHAR: " + this.value.toString() + " not recognized. Please check line: " + this.line + " column: " + this.column;
             case SYNTAX_ERROR:
-                return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + ". Got " +this.value.toString() + " instead of " + this.expectedValue + ".";
+                if (this.value.toString() != "EOS") {
+                    return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + ". Got { " +this.value.toString() + " } instead of " + this.expectedValue + ".";
+                } else {
+                    return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + " expected " + this.expectedValue + ".";
+                }
             case SYNTAX_ERROR_EXTRA_PAR:
                 return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra parenthesis.";
             case SYNTAX_ERROR_MULT:

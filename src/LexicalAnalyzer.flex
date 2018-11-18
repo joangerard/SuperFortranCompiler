@@ -214,10 +214,10 @@ CloseParenthesis = ")"
 <LONGCOMMENTSTATE> {
     {LongCommentEnd}            {yybegin(YYINITIAL);}
     .                           {}
-    {EndLine}                   {}
+    {EndLine}                   {tokenizer.addToken(LexicalUnit.ENDLINE, yyline, yycolumn,"\\n");}
 }
 
 <SHORTCOMMENTSTATE> {
     {EndLine}                   {yybegin(YYINITIAL);}
-    .                           {}
+    .                           {tokenizer.addToken(LexicalUnit.ENDLINE, yyline, yycolumn,"\\n");}
 }

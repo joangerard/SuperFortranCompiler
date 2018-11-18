@@ -82,7 +82,9 @@ public class Symbol{
 		if (this.isNonTerminal()){
 			return this.value.toString();
 		}else if(this.isTerminal()){
-			final String value = this.value != null? this.value.toString() : "";
+			// Latex triggers an error when reading \n in end of line so we decided to add this line of code.
+			final String trueValue = this.value.toString().contains("\\n") ? "End line" : this.value.toString();
+			final String value = this.value != null? trueValue : "";
 			final String type  = this.type  != null? this.type.toString()  : "";
 			return type+" \\texttt{"+value+"}";
 		}

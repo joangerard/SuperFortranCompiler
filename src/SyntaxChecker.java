@@ -58,7 +58,14 @@ public class SyntaxChecker {
     }
 
     private CompilerError createErrorMessage(Symbol token, LexicalUnit expectedType) {
-        if (expectedType == null) {
+        if (expectedType == LexicalUnit.ENDLINE){
+            return new CompilerError(
+                    ErrorType.SYNTAX_ERROR_END_LINE,
+                    token.getLine(),
+                    token.getColumn(),
+                    token.getValue());
+        }
+        else if (expectedType == null) {
             return new CompilerError(
                     ErrorType.SYNTAX_ERROR,
                     token.getLine(),
@@ -112,12 +119,13 @@ public class SyntaxChecker {
             derivationRules.add(new Rule(1, "Program", this.getToken()));
             ParseTree beginProgTree = this.matchTree(LexicalUnit.BEGINPROG, this.getToken().getType());
             ParseTree progNameTree = this.matchTree(LexicalUnit.PROGNAME, this.getToken().getType());
-            this.skipEndLines();
+            ParseTree endLineTree = this.skipEndLines();
             ParseTree variableTree = this.variables();
             ParseTree codeTree = this.code();
             ParseTree endProgTree = this.matchTree(LexicalUnit.ENDPROG, this.getToken().getType());
             children.add(beginProgTree);
             children.add(progNameTree);
+            children.add(endLineTree);
             children.add(variableTree);
             children.add(codeTree);
             children.add(endProgTree);
@@ -215,9 +223,10 @@ public class SyntaxChecker {
             this.derivationRules.add(new Rule(2, "Variables",  this.getToken()));
             ParseTree variablesTree1 = this.matchTree(LexicalUnit.VARIABLES, this.getToken().getType());
             ParseTree varListTree1 = this.varList();
+            ParseTree endLineTree = this.skipEndLines();
             children.add(variablesTree1);
             children.add(varListTree1);
-            this.skipEndLines();
+            children.add(endLineTree);
             variablesTree = new ParseTree(new Symbol(null, VARIABLES), children);
         }
         return variablesTree;
@@ -277,9 +286,10 @@ public class SyntaxChecker {
 
             this.derivationRules.add(new Rule(7, "Code",  this.getToken()));
             ParseTree instruction = this.instruction();
-            this.skipEndLines();
+            ParseTree endLineTree = this.skipEndLines();
             ParseTree codeTree1 = this.code();
             children.add(instruction);
+            children.add(endLineTree);
             children.add(codeTree1);
             codeTree = new ParseTree(new Symbol(null, CODE), children);
         }
@@ -338,7 +348,7 @@ public class SyntaxChecker {
             ParseTree condTree = this.cond();
             ParseTree rparenTree = this.matchTree(LexicalUnit.RPAREN, this.getToken().getType());
             ParseTree doTree = this.matchTree(LexicalUnit.DO, this.getToken().getType());
-            this.skipEndLines();
+            ParseTree endLineTree = this.skipEndLines();
             ParseTree codeTree = this.code();
             ParseTree endWhileTree = this.matchTree(LexicalUnit.ENDWHILE, this.getToken().getType());
             children.add(whileTree);
@@ -346,6 +356,7 @@ public class SyntaxChecker {
             children.add(condTree);
             children.add(rparenTree);
             children.add(doTree);
+            children.add(endLineTree);
             children.add(codeTree);
             children.add(endWhileTree);
             whileVariableTree = new ParseTree(new Symbol(null, WHILE), children);
@@ -365,7 +376,7 @@ public class SyntaxChecker {
             ParseTree toTree = this.matchTree(LexicalUnit.TO, this.getToken().getType());
             ParseTree exprArithTree1 = this.exprArith();
             ParseTree doTree = this.matchTree(LexicalUnit.DO, this.getToken().getType());
-            this.skipEndLines();
+            ParseTree endLineTree = this.skipEndLines();
             ParseTree codeTree = this.code();
             ParseTree endForTree = this.matchTree(LexicalUnit.ENDFOR, this.getToken().getType());
             children.add(forTree1);
@@ -375,6 +386,7 @@ public class SyntaxChecker {
             children.add(toTree);
             children.add(exprArithTree1);
             children.add(doTree);
+            children.add(endLineTree);
             children.add(codeTree);
             children.add(endForTree);
             forTree = new ParseTree(new Symbol(null, FOR), children);
@@ -446,7 +458,7 @@ public class SyntaxChecker {
             ParseTree condTree = this.cond();
             ParseTree rParenTree = this.matchTree(LexicalUnit.RPAREN, this.getToken().getType());
             ParseTree thenTree = this.matchTree(LexicalUnit.THEN, this.getToken().getType());
-            this.skipEndLines();
+            ParseTree endLineTree = this.skipEndLines();
             ParseTree codeTree = this.code();
             ParseTree ifTailTree = this.ifTail();
             children.add(ifTree1);
@@ -454,6 +466,7 @@ public class SyntaxChecker {
             children.add(condTree);
             children.add(rParenTree);
             children.add(thenTree);
+            children.add(endLineTree);
             children.add(codeTree);
             children.add(ifTailTree);
             ifTree = new ParseTree(new Symbol(null, IF), children);
@@ -473,11 +486,12 @@ public class SyntaxChecker {
                 case ELSE:
                     this.derivationRules.add(new Rule(32, "IfTail",  this.getToken()));
                     ParseTree elseTree = this.matchTree(LexicalUnit.ELSE, this.getToken().getType());
-                    this.skipEndLines();
-                    ParseTree codetree = this.code();
+                    ParseTree endLineTree = this.skipEndLines();
+                    ParseTree codeTree = this.code();
                     ParseTree endIfTree1 = this.matchTree(LexicalUnit.ENDIF, this.getToken().getType());
                     children.add(elseTree);
-                    children.add(codetree);
+                    children.add(endLineTree);
+                    children.add(codeTree);
                     children.add(endIfTree1);
                     return new ParseTree(new Symbol(null, IF_TAIL), children);
                 default:
@@ -815,11 +829,12 @@ public class SyntaxChecker {
         this.tokenIndex++;
     }
 
-    private void skipEndLines() {
-
+    private ParseTree skipEndLines() {
+        ParseTree endLineTree = this.matchTree(LexicalUnit.ENDLINE, this.getToken().getType());
         while (this.shouldSkipTokens()) {
             this.skipToken();
         }
+        return endLineTree;
     }
 
     private boolean shouldSkipTokens() {

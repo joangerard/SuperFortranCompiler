@@ -32,7 +32,7 @@ public class Main{
                         SymbolMapperInterface symbolMapper = new SymbolMapper();
                         SyntaxChecker syntaxChecker = new SyntaxChecker(tokens, lines, symbolMapper);
                         ParseTree parseTree = syntaxChecker.getParseTree();
-                        //FileHandler.writeInFile(parseTree.toLaTeX(),"parser_tree.tex");
+                        FileHandler.writeInFile(parseTree.toLaTeX(),"parser_tree.tex");
 
                         if (!syntaxChecker.isSyntaxCorrect()) {
                             System.out.println(syntaxChecker.getError().getErrorMessage());

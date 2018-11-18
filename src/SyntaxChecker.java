@@ -116,7 +116,7 @@ public class SyntaxChecker {
         ParseTree programTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            derivationRules.add(new Rule(1, "Program", this.getToken()));
+            derivationRules.add(new Rule(1, "BEGINPROG [ProgName][EndLine] <Variables> <Code> ENDPROG [EOS]", this.getToken()));
             ParseTree beginProgTree = this.matchTree(LexicalUnit.BEGINPROG, this.getToken().getType());
             ParseTree progNameTree = this.matchTree(LexicalUnit.PROGNAME, this.getToken().getType());
             ParseTree endLineTree = this.skipEndLines();
@@ -143,17 +143,17 @@ public class SyntaxChecker {
 
             switch (token.getType()) {
                 case VARNAME:
-                    this.derivationRules.add(new Rule(24, "Id",  this.getToken()));
+                    this.derivationRules.add(new Rule(24, "Id ->  [VarName]",  this.getToken()));
                     ParseTree varNameTree = this.matchTree(LexicalUnit.VARNAME, this.getToken().getType());
                     children.add(varNameTree);
                     break;
                 case NUMBER:
-                    this.derivationRules.add(new Rule(25, "Id",  this.getToken()));
+                    this.derivationRules.add(new Rule(25, "Id -> [Number]",  this.getToken()));
                     ParseTree numberTree = this.matchTree(LexicalUnit.NUMBER, this.getToken().getType());
                     children.add(numberTree);
                     break;
                 case LPAREN:
-                    this.derivationRules.add(new Rule(26, "Id",  this.getToken()));
+                    this.derivationRules.add(new Rule(26, "Id -> ( <ExprArith> )",  this.getToken()));
                     ParseTree lParenTree = this.matchTree(LexicalUnit.LPAREN, this.getToken().getType());
                     ParseTree exprArithTree = this.exprArith();
                     ParseTree rParenTree = this.matchTree(LexicalUnit.RPAREN, this.getToken().getType());
@@ -162,7 +162,7 @@ public class SyntaxChecker {
                     children.add(rParenTree);
                     break;
                 case MINUS:
-                    this.derivationRules.add(new Rule(27, "Id",  this.getToken()));
+                    this.derivationRules.add(new Rule(27, "Id -> − <IdTail>",  this.getToken()));
                     ParseTree minusTree = this.matchTree(LexicalUnit.MINUS, this.getToken().getType());
                     ParseTree idTailTree = this.idTail();
                     children.add(minusTree);
@@ -183,12 +183,12 @@ public class SyntaxChecker {
             List<ParseTree> children = new ArrayList<ParseTree>();
             switch (token.getType()) {
                 case VARNAME:
-                    this.derivationRules.add(new Rule(28, "IdTail",  this.getToken()));
+                    this.derivationRules.add(new Rule(28, "IdTail -> [VarName]",  this.getToken()));
                     ParseTree varNameTree = this.matchTree(LexicalUnit.VARNAME, this.getToken().getType());
                     children.add(varNameTree);
                     return new ParseTree(new Symbol(null, ID_TAIL), children);
                 case NUMBER:
-                    this.derivationRules.add(new Rule(29, "IdTail",  this.getToken()));
+                    this.derivationRules.add(new Rule(29, "IdTail -> [VarNumber]",  this.getToken()));
                     ParseTree numberTree = this.matchTree(LexicalUnit.NUMBER, this.getToken().getType());
                     children.add(numberTree);
                     return new ParseTree(new Symbol(null, ID_TAIL), children);
@@ -213,14 +213,14 @@ public class SyntaxChecker {
                 case FOR:
                 case PRINT:
                 case READ:
-                    this.derivationRules.add(new Rule(3, "Variables",  this.getToken()));
+                    this.derivationRules.add(new Rule(3, "<Variables> -> EPSILON",  this.getToken()));
                     ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
                     children.add(epsilonTree);
                     ParseTree parseTree = new ParseTree(new Symbol(null, VARIABLES), children);
 
                     return parseTree;
             }
-            this.derivationRules.add(new Rule(2, "Variables",  this.getToken()));
+            this.derivationRules.add(new Rule(2, "<Variables> -> VARIABLES <VarList> [EndLine]",  this.getToken()));
             ParseTree variablesTree1 = this.matchTree(LexicalUnit.VARIABLES, this.getToken().getType());
             ParseTree varListTree1 = this.varList();
             ParseTree endLineTree = this.skipEndLines();
@@ -236,7 +236,7 @@ public class SyntaxChecker {
         ParseTree varListTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(4, "VarList",  this.getToken()));
+            this.derivationRules.add(new Rule(4, "<VarList> -> [VarName] <VarListTail>",  this.getToken()));
             ParseTree varNameTree = this.matchTree(LexicalUnit.VARNAME, this.getToken().getType());
             ParseTree varListTailTree = this.varListTail();
             children.add(varNameTree);
@@ -254,10 +254,10 @@ public class SyntaxChecker {
             switch (token.getType()) {
                 case ENDLINE:
                 case RPAREN:
-                    this.derivationRules.add(new Rule(6, "Variables",  this.getToken()));
+                    this.derivationRules.add(new Rule(6, "<VarListTail> -> EPSILON",  this.getToken()));
                     return new ParseTree(new Symbol(null, EPSILON));
             }
-            this.derivationRules.add(new Rule(5, "VarListTail",  this.getToken()));
+            this.derivationRules.add(new Rule(5, "<VarListTail> -> , <VarList>",  this.getToken()));
             ParseTree comaTree = this.matchTree(LexicalUnit.COMMA, this.getToken().getType());
             ParseTree varListTree = this.varList();
             children.add(comaTree);
@@ -278,13 +278,13 @@ public class SyntaxChecker {
                 case ENDIF:
                 case ELSE:
                 case ENDFOR:
-                    this.derivationRules.add(new Rule(8, "Code",  this.getToken()));
+                    this.derivationRules.add(new Rule(8, "<Code> -> EPSILON",  this.getToken()));
                     ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
                     children.add(epsilonTree);
                     return new ParseTree(new Symbol(null, CODE), children);
             }
 
-            this.derivationRules.add(new Rule(7, "Code",  this.getToken()));
+            this.derivationRules.add(new Rule(7, "<Code> -> <Instruction> [EndLine] <Code>",  this.getToken()));
             ParseTree instruction = this.instruction();
             ParseTree endLineTree = this.skipEndLines();
             ParseTree codeTree1 = this.code();
@@ -301,32 +301,32 @@ public class SyntaxChecker {
             List<ParseTree> children = new ArrayList<ParseTree>();
             switch (this.getToken().getType()) {
                 case READ:
-                    this.derivationRules.add(new Rule(14, "Instruction",  this.getToken()));
+                    this.derivationRules.add(new Rule(14, "<Instruction> -> <Read>",  this.getToken()));
                     ParseTree readTree = this.read();
                     children.add(readTree);
                     return new ParseTree(new Symbol(null, READ), children);
                 case VARNAME:
-                    this.derivationRules.add(new Rule(9, "Instruction",  this.getToken()));
+                    this.derivationRules.add(new Rule(9, "<Instruction> -> <Varname>",  this.getToken()));
                     ParseTree assign = this.assign();
                     children.add(assign);
                     return new ParseTree(new Symbol(null, ASSIGN), children);
                 case IF:
-                    this.derivationRules.add(new Rule(10, "Instruction",  this.getToken()));
+                    this.derivationRules.add(new Rule(10, "<Instruction> -> <If>",  this.getToken()));
                     ParseTree ifTree = this.ifVariable();
                     children.add(ifTree);
                     return new ParseTree(new Symbol(null, IF), children);
                 case WHILE:
-                    this.derivationRules.add(new Rule(11, "Instruction",  this.getToken()));
+                    this.derivationRules.add(new Rule(11, "<Instruction> -> <While>",  this.getToken()));
                     ParseTree whileTree = this.whileVariable();
                     children.add(whileTree);
                     return new ParseTree(new Symbol(null, WHILE), children);
                 case FOR:
-                    this.derivationRules.add(new Rule(12, "Instruction",  this.getToken()));
+                    this.derivationRules.add(new Rule(12, "<Instruction> -> <FOR>",  this.getToken()));
                     ParseTree forTree = this.forVariable();
                     children.add(forTree);
                     return new ParseTree(new Symbol(null, FOR), children);
                 case PRINT:
-                    this.derivationRules.add(new Rule(13, "Instruction",  this.getToken()));
+                    this.derivationRules.add(new Rule(13, "<Instruction> -> PRINT",  this.getToken()));
                     ParseTree printTree = this.print();
                     children.add(printTree);
                     return new ParseTree(new Symbol(null, PRINT), children);
@@ -342,7 +342,7 @@ public class SyntaxChecker {
         ParseTree whileVariableTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(48, "While",  this.getToken()));
+            this.derivationRules.add(new Rule(48, "<While> -> WHILE (<Cond>) DO [EndLine]<Code> ENDWHILE",  this.getToken()));
             ParseTree whileTree = this.matchTree(LexicalUnit.WHILE, this.getToken().getType());
             ParseTree lparenTree = this.matchTree(LexicalUnit.LPAREN, this.getToken().getType());
             ParseTree condTree = this.cond();
@@ -368,7 +368,7 @@ public class SyntaxChecker {
         ParseTree forTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(49, "For",  this.getToken()));
+            this.derivationRules.add(new Rule(49, "<For> -> FOR [VarName] := <ExprArith> TO <ExprArith> DO [EndLine] <Code> ENDFOR",  this.getToken()));
             ParseTree forTree1 = this.matchTree(LexicalUnit.FOR, this.getToken().getType());
             ParseTree varNameTree = this.matchTree(LexicalUnit.VARNAME, this.getToken().getType());
             ParseTree assignTree = this.matchTree(LexicalUnit.ASSIGN, this.getToken().getType());
@@ -398,7 +398,7 @@ public class SyntaxChecker {
         ParseTree printTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(50, "Print",  this.getToken()));
+            this.derivationRules.add(new Rule(50, "<Print> -> PRINT(<ExpList>)",  this.getToken()));
             ParseTree printTree1 = this.matchTree(LexicalUnit.PRINT, this.getToken().getType());
             ParseTree lParenTree = this.matchTree(LexicalUnit.LPAREN, this.getToken().getType());
             ParseTree expListTree = this.expList();
@@ -416,7 +416,7 @@ public class SyntaxChecker {
         ParseTree expListTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(52, "ExpList",  this.getToken()));
+            this.derivationRules.add(new Rule(52, "<ExpList> -> <ExprArith> <ExpListTail>",  this.getToken()));
             ParseTree exprArithTree = this.exprArith();
             ParseTree expListTailTree = this.expListTail();
             children.add(exprArithTree);
@@ -432,13 +432,13 @@ public class SyntaxChecker {
             List<ParseTree> children = new ArrayList<ParseTree>();
             switch (this.getToken().getType()) {
                 case RPAREN:
-                    this.derivationRules.add(new Rule(54, "ExpListTail",  this.getToken()));
+                    this.derivationRules.add(new Rule(54, "<ExpListTail> -> EPSILON",  this.getToken()));
                     ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
                     children.add(epsilonTree);
                     return new ParseTree(new Symbol(null, EXP_LIST_TAIL), children);
 
             }
-            this.derivationRules.add(new Rule(53, "ExpListTail",  this.getToken()));
+            this.derivationRules.add(new Rule(53, "<ExpListTail> -> , <ExpList>",  this.getToken()));
             ParseTree commaTree = this.matchTree(LexicalUnit.COMMA, this.getToken().getType());
             ParseTree expListTree = this.expList();
             children.add(commaTree);
@@ -452,7 +452,7 @@ public class SyntaxChecker {
         ParseTree ifTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(30, "If",  this.getToken()));
+            this.derivationRules.add(new Rule(30, "<If> -> IF ( <Cond> ) THEN [EndLine] <Code><IfTail>",  this.getToken()));
             ParseTree ifTree1 = this.matchTree(LexicalUnit.IF, this.getToken().getType());
             ParseTree lParenTree = this.matchTree(LexicalUnit.LPAREN, this.getToken().getType());
             ParseTree condTree = this.cond();
@@ -479,12 +479,12 @@ public class SyntaxChecker {
             List<ParseTree> children = new ArrayList<ParseTree>();
             switch (this.getToken().getType()) {
                 case ENDIF:
-                    this.derivationRules.add(new Rule(31, "IfTail",  this.getToken()));
+                    this.derivationRules.add(new Rule(31, "<IfTail> -> ENDIF",  this.getToken()));
                     ParseTree endIfTree = this.matchTree(LexicalUnit.ENDIF, this.getToken().getType());
                     children.add(endIfTree);
                     return new ParseTree(new Symbol(null, IF_TAIL), children);
                 case ELSE:
-                    this.derivationRules.add(new Rule(32, "IfTail",  this.getToken()));
+                    this.derivationRules.add(new Rule(32, "<IfTail> -> ELSE [EndLine] <Code> ENDIF",  this.getToken()));
                     ParseTree elseTree = this.matchTree(LexicalUnit.ELSE, this.getToken().getType());
                     ParseTree endLineTree = this.skipEndLines();
                     ParseTree codeTree = this.code();
@@ -505,7 +505,7 @@ public class SyntaxChecker {
         ParseTree condTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(33, "Cond",  this.getToken()));
+            this.derivationRules.add(new Rule(33, "<Cond> -> <CondAnd><CondA>",  this.getToken()));
             ParseTree condAndTree = this.condAnd();
             ParseTree condA = this.condA();
             children.add(condAndTree);
@@ -522,12 +522,12 @@ public class SyntaxChecker {
 
             switch (this.getToken().getType()) {
                 case RPAREN:
-                    this.derivationRules.add(new Rule(35, "CondA",  this.getToken()));
+                    this.derivationRules.add(new Rule(35, "<CondA> -> EPSILON",  this.getToken()));
                     ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
                     children.add(epsilonTree);
                     return new ParseTree(new Symbol(null, COND_A), children);
             }
-            this.derivationRules.add(new Rule(34, "Or",  this.getToken()));
+            this.derivationRules.add(new Rule(34, "<CondA> -> OR <CondAnd><CondA>",  this.getToken()));
             ParseTree orTree = this.matchTree(LexicalUnit.OR, this.getToken().getType());
             ParseTree condAndTree = this.condAnd();
             ParseTree condATree1 = this.condA();
@@ -543,7 +543,7 @@ public class SyntaxChecker {
         ParseTree condAndTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(36, "CondAnd",  this.getToken()));
+            this.derivationRules.add(new Rule(36, "<CondAnd> -> <CondFinal> <CondAndA>",  this.getToken()));
             ParseTree condFinalTree = this.condFinal();
             ParseTree condAndATree = this.condAndA();
             children.add(condFinalTree);
@@ -558,13 +558,13 @@ public class SyntaxChecker {
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
             if (this.getToken().getType() == LexicalUnit.NOT) {
-                this.derivationRules.add(new Rule(39, "CondFinal",  this.getToken()));
+                this.derivationRules.add(new Rule(39, "<CondFinal> -> EPSILON",  this.getToken()));
                 ParseTree notTree = this.matchTree(LexicalUnit.NOT, this.getToken().getType());
                 ParseTree simpleCondTree = this.simpleCond();
                 children.add(notTree);
                 children.add(simpleCondTree);
             } else {
-                this.derivationRules.add(new Rule(40, "CondFinal",  this.getToken()));
+                this.derivationRules.add(new Rule(40, "<CondFinal> -> NOT <SimpleCond>",  this.getToken()));
                 ParseTree simpleCondTree1 = this.simpleCond();
                 children.add(simpleCondTree1);
             }
@@ -577,7 +577,7 @@ public class SyntaxChecker {
         ParseTree simpleCondTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(41, "SimpleCond",  this.getToken()));
+            this.derivationRules.add(new Rule(41, "<SimpleCond> -> <ExprArith><Comp><ExprArith>",  this.getToken()));
             ParseTree exprArithTree = this.exprArith();
             ParseTree compTree = this.comp();
             ParseTree exprArithTree1 = this.exprArith();
@@ -594,32 +594,32 @@ public class SyntaxChecker {
             List<ParseTree> children = new ArrayList<ParseTree>();
             switch (this.getToken().getType()) {
                 case EQ:
-                    this.derivationRules.add(new Rule(42, "Comp",  this.getToken()));
+                    this.derivationRules.add(new Rule(42, "<Comp> -> =",  this.getToken()));
                     ParseTree eqTree = this.matchTree(LexicalUnit.EQ, this.getToken().getType());
                     children.add(eqTree);
                     return new ParseTree(new Symbol(null, COMP), children);
                 case GEQ:
-                    this.derivationRules.add(new Rule(43, "Comp",  this.getToken()));
+                    this.derivationRules.add(new Rule(43, "<Comp> -> >=",  this.getToken()));
                     ParseTree geqTree = this.matchTree(LexicalUnit.GEQ, this.getToken().getType());
                     children.add(geqTree);
                     return new ParseTree(new Symbol(null, COMP), children);
                 case GT:
-                    this.derivationRules.add(new Rule(44, "Comp",  this.getToken()));
+                    this.derivationRules.add(new Rule(44, "<Comp> -> >",  this.getToken()));
                     ParseTree gtTree = this.matchTree(LexicalUnit.GT, this.getToken().getType());
                     children.add(gtTree);
                     return new ParseTree(new Symbol(null, COMP), children);
                 case LEQ:
-                    this.derivationRules.add(new Rule(45, "Comp",  this.getToken()));
+                    this.derivationRules.add(new Rule(45, "<Comp> -> <=",  this.getToken()));
                     ParseTree leqTree = this.matchTree(LexicalUnit.LEQ, this.getToken().getType());
                     children.add(leqTree);
                     return new ParseTree(new Symbol(null, COMP), children);
                 case LT:
-                    this.derivationRules.add(new Rule(46, "Comp",  this.getToken()));
+                    this.derivationRules.add(new Rule(46, "<Comp> -> <",  this.getToken()));
                     ParseTree ltTree = this.matchTree(LexicalUnit.LT, this.getToken().getType());
                     children.add(ltTree);
                     return new ParseTree(new Symbol(null, COMP), children);
                 case NEQ:
-                    this.derivationRules.add(new Rule(47, "Comp",  this.getToken()));
+                    this.derivationRules.add(new Rule(47, "<Comp> -> <>",  this.getToken()));
                     ParseTree neqTree = this.matchTree(LexicalUnit.NEQ, this.getToken().getType());
                     children.add(neqTree);
                     return new ParseTree(new Symbol(null, COMP), children);
@@ -637,12 +637,12 @@ public class SyntaxChecker {
             switch (this.getToken().getType()) {
                 case RPAREN:
                 case OR:
-                    this.derivationRules.add(new Rule(38, "CondAndA",  this.getToken()));
+                    this.derivationRules.add(new Rule(38, "<CondAndA> -> EPSILON",  this.getToken()));
                     ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
                     children.add(epsilonTree);
                     return new ParseTree(new Symbol(null, COND_AND_A), children);
             }
-            this.derivationRules.add(new Rule(37, "CondAndA",  this.getToken()));
+            this.derivationRules.add(new Rule(37, "<CondAndA> -> AND <CondFinal> <CondAndA>",  this.getToken()));
             ParseTree andTree = this.matchTree(LexicalUnit.AND, this.getToken().getType());
             ParseTree condFinalTree = this.condFinal();
             ParseTree condAndATree = this.condAndA();
@@ -657,7 +657,7 @@ public class SyntaxChecker {
     private ParseTree assign() {
         ParseTree assignTree = null;
         if (this.shouldContinue) {
-            this.derivationRules.add(new Rule(15, "Assign",  this.getToken()));
+            this.derivationRules.add(new Rule(15, "<Assign> -> [ VarName] := <ExprArith>",  this.getToken()));
             ParseTree varnameLeaf = this.matchTree(LexicalUnit.VARNAME, this.getToken().getType());
             ParseTree assignLeaf = this.matchTree(LexicalUnit.ASSIGN, this.getToken().getType());
             ParseTree exprArithTree = this.exprArith();
@@ -674,7 +674,7 @@ public class SyntaxChecker {
         ParseTree readTree = null;
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
-            this.derivationRules.add(new Rule(51, "Read",  this.getToken()));
+            this.derivationRules.add(new Rule(51, "<Read> -> READ(<VarList>)",  this.getToken()));
             ParseTree readTree1 = this.matchTree(LexicalUnit.READ, this.getToken().getType());
             ParseTree lParenTree = this.matchTree(LexicalUnit.LPAREN, this.getToken().getType());
             ParseTree varListTree = this.varList();
@@ -691,7 +691,7 @@ public class SyntaxChecker {
     private ParseTree exprArith() {
         ParseTree exprArithTree = null;
         if (this.shouldContinue) {
-            this.derivationRules.add(new Rule(16, "ExprArith",  this.getToken()));
+            this.derivationRules.add(new Rule(16, "<ExprArith> -> <ExprMult><ExprArithA>",  this.getToken()));
             ParseTree exprMultTree = this.exprMult();
             ParseTree exprArithATree = this.exprArithA();
             List<ParseTree> children = new ArrayList<ParseTree>();
@@ -719,12 +719,12 @@ public class SyntaxChecker {
                 case AND:
                 case OR:
                 case COMMA:
-                    this.derivationRules.add(new Rule(19, "ExprArithA",  this.getToken()));
+                    this.derivationRules.add(new Rule(19, "<ExprArithA> -> EPSILON",  this.getToken()));
                     ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
                     children.add(epsilonTree);
                     return new ParseTree(new Symbol(null, EXPR_ARITH_A), children);
                 case PLUS:
-                    this.derivationRules.add(new Rule(17, "ExprArithA",  this.getToken()));
+                    this.derivationRules.add(new Rule(17, "<ExprArithA> -> + <ExprMult> <ExprArithA>",  this.getToken()));
                     ParseTree plusTree = this.matchTree(LexicalUnit.PLUS, this.getToken().getType());
                     ParseTree exprMultTree = this.exprMult();
                     ParseTree exprArithA = this.exprArithA();
@@ -733,7 +733,7 @@ public class SyntaxChecker {
                     children.add(exprArithA);
                     return new ParseTree(new Symbol(null, EXPR_ARITH_A), children);
                 case MINUS:
-                    this.derivationRules.add(new Rule(18, "ExprArithA",  this.getToken()));
+                    this.derivationRules.add(new Rule(18, "<ExprArithA> -> - <ExprMult> <ExprArithA>",  this.getToken()));
                     ParseTree minusTree = this.matchTree(LexicalUnit.MINUS, this.getToken().getType());
                     ParseTree exprMultTree1 = this.exprMult();
                     ParseTree exprArithATree = this.exprArithA();
@@ -749,7 +749,7 @@ public class SyntaxChecker {
     private ParseTree exprMult() {
         ParseTree exprMultTree = null;
         if (this.shouldContinue) {
-            this.derivationRules.add(new Rule(20, "ExprMult",  this.getToken()));
+            this.derivationRules.add(new Rule(20, "<ExprMult> -> <Id><ExprMultA>",  this.getToken()));
             ParseTree idTree = this.id();
             ParseTree exprMultATree = this.exprMultA();
             List<ParseTree> children = new ArrayList<ParseTree>();
@@ -779,12 +779,12 @@ public class SyntaxChecker {
                 case AND:
                 case OR:
                 case COMMA:
-                    this.derivationRules.add(new Rule(23, "ExprMultA",  this.getToken()));
+                    this.derivationRules.add(new Rule(23, "<ExprMultA> -> EPSILON",  this.getToken()));
                     ParseTree epsilonTree = new ParseTree(new Symbol(null, EPSILON));
                     children.add(epsilonTree);
                     return new ParseTree(new Symbol(null, EXPR_MULT_A), children);
                 case TIMES:
-                    this.derivationRules.add(new Rule(21, "ExprMultA",  this.getToken()));
+                    this.derivationRules.add(new Rule(21, "<ExprMultA> -> ∗ <Id><ExprMultA>",  this.getToken()));
                     ParseTree timesTree = this.matchTree(LexicalUnit.TIMES, this.getToken().getType());
                     ParseTree idTree = this.id();
                     ParseTree exprMultATree1 = this.exprMultA();
@@ -793,7 +793,7 @@ public class SyntaxChecker {
                     children.add(exprMultATree1);
                     return new ParseTree(new Symbol(null, EXPR_MULT_A), children);
                 case DIVIDE:
-                    this.derivationRules.add(new Rule(22, "ExprMultA",  this.getToken()));
+                    this.derivationRules.add(new Rule(22, "<ExprMultA> -> / <Id><ExprMultA>",  this.getToken()));
                     ParseTree divideTree = this.matchTree(LexicalUnit.DIVIDE, this.getToken().getType());
                     ParseTree idTree1 = this.id();
                     ParseTree exprMultATree2 = this.exprMultA();
@@ -808,8 +808,20 @@ public class SyntaxChecker {
     }
 
     public void showDerivationRules() {
+        System.out.println();
+        System.out.println();
+        System.out.println("Detailed left most derivation rules:");
         for (Rule rule: derivationRules) {
             System.out.println(rule.toString());
+        }
+    }
+
+    public void showDerivationRulesShort() {
+        System.out.println();
+        System.out.println();
+        System.out.println("Left most derivation rules:");
+        for (Rule rule: derivationRules) {
+            System.out.print(rule.getNumber()+" ");
         }
     }
 

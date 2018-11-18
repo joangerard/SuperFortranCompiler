@@ -40,15 +40,25 @@ public List<Symbol> getTokens(){
 public Boolean gotAnyError() {
     return errorHandler.getErrors().size() > 0;
 }
+
+public void printIdentifiers() {
+   System.out.println("");
+   System.out.println("Identifiers");
+
+    System.out.println(identifierList.toString());
+}
+
+public void printTokens() {
+    System.out.println("");
+   System.out.println("Tokens");
+
+    tokenPrinter.print();
+}
+
 %}
 
 %eof{//code to execute after scanning
    tokenizer.addToken(LexicalUnit.EOS, yyline, yycolumn, "EOS");
-   tokenPrinter.print();
-   System.out.println(""); 
-   System.out.println("Identifiers");
-   System.out.println(identifierList.toString());
-
     errorPrinter.print();
 %eof}
 

@@ -9,6 +9,10 @@ public class Rule {
         this.terminal = terminal;
     }
 
+    public Integer getNumber() {
+        return number;
+    }
+
     @Override
     public String toString(){
         return this.number + "\tby " + productionRule;

@@ -42,13 +42,13 @@ public class Main{
                     List<String> lines = FileHandler.readFile(filename);
                     List<Symbol> tokens = scanner.getTokens();
                     SymbolMapperInterface symbolMapper = new SymbolMapper();
-                    SyntaxChecker syntaxChecker = new SyntaxChecker(tokens, lines, symbolMapper);
-                    ParseTree parseTree = syntaxChecker.getParseTree();
+                    Parser parser = new Parser(tokens, lines, symbolMapper);
+                    ParseTree parseTree = parser.getParseTree();
 
-                    if (!syntaxChecker.isSyntaxCorrect()) {
+                    if (!parser.isSyntaxCorrect()) {
                         System.out.println("Syntax errors. Fix them in order to continue.");
                         System.out.println("");
-                        System.out.println(syntaxChecker.getError().getErrorMessage());
+                        System.out.println(parser.getError().getErrorMessage());
                     }
                     else {
                         if (argumentHandler.showIdentifiers()) {
@@ -61,7 +61,7 @@ public class Main{
 
                         if(argumentHandler.showVerbose()) {
 
-                            syntaxChecker.showDerivationRules();
+                            parser.showDerivationRules();
                         }
 
                         if(argumentHandler.shouldWriteParseTreeText()) {
@@ -76,7 +76,7 @@ public class Main{
                             System.out.println("Parse tree was created. Please check " + latexFile + " file.");
                         }
 
-                        syntaxChecker.showDerivationRulesShort();
+                        parser.showDerivationRulesShort();
                     }
                 }
             }

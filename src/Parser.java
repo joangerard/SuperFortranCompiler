@@ -4,7 +4,7 @@ import utils.errorhandling.ErrorType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SyntaxChecker {
+public class Parser {
 
     private List<Symbol> tokens;
     private int tokenIndex;
@@ -43,7 +43,7 @@ public class SyntaxChecker {
     private final String EXP_LIST = "EXP-LIST";
     private final String EXP_LIST_TAIL = "EXP-LIST-TAIL";
 
-    public SyntaxChecker(List<Symbol> tokens, List<String> lines, SymbolMapperInterface symbolMapper) {
+    public Parser(List<Symbol> tokens, List<String> lines, SymbolMapperInterface symbolMapper) {
         this.tokens = tokens;
         this.tokenIndex = 0;
         this.shouldContinue = true;

@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Responsible to check the syntax.
+ * Responsible to check for syntax and generating the parser tree.
  */
-public class SyntaxChecker {
+public class Parser {
 
     /**
      * List of tokens to check.
@@ -82,7 +82,7 @@ public class SyntaxChecker {
      * @param lines         List of lines of code
      * @param symbolMapper  SymbolMapperInterface
      */
-    public SyntaxChecker(List<Symbol> tokens, List<String> lines, SymbolMapperInterface symbolMapper) {
+    public Parser(List<Symbol> tokens, List<String> lines, SymbolMapperInterface symbolMapper) {
         this.tokens = tokens;
         this.tokenIndex = 0;
         this.shouldContinue = true;

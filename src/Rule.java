@@ -1,3 +1,6 @@
+/**
+ * Dto used for
+ */
 public class Rule {
     private Integer number;
     private String productionRule;

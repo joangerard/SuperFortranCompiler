@@ -4,15 +4,48 @@ import utils.errorhandling.ErrorType;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Responsible to check the syntax.
+ */
 public class SyntaxChecker {
 
+    /**
+     * List of tokens to check.
+     */
     private List<Symbol> tokens;
+    /**
+     * It has the current token to analyze.
+     */
     private int tokenIndex;
+
+    /**
+     * It is false if the program found any error.
+     */
     private Boolean shouldContinue;
+
+    /**
+     * It has the error message if there was any.
+     */
     private CompilerError error;
+
+    /**
+     * List of lines of code.
+     */
     private List<String> lines;
+
+    /**
+     * It contains the derivation rules that were applied.
+     */
     private List<Rule> derivationRules;
+
+    /**
+     * It containes the symbol mapper used for error messages.
+     */
     private SymbolMapperInterface symbolMapper;
+
+    /**
+     * This constants are used for Parse tree generation.
+     */
     private final String EPSILON = "EPSILON";
     private final String PROGRAM = "PROGRAM";
     private final String VARIABLES = "VARIABLES";
@@ -43,6 +76,12 @@ public class SyntaxChecker {
     private final String EXP_LIST = "EXP-LIST";
     private final String EXP_LIST_TAIL = "EXP-LIST-TAIL";
 
+    /**
+     * Constructor.
+     * @param tokens        List of tokens
+     * @param lines         List of lines of code
+     * @param symbolMapper  SymbolMapperInterface
+     */
     public SyntaxChecker(List<Symbol> tokens, List<String> lines, SymbolMapperInterface symbolMapper) {
         this.tokens = tokens;
         this.tokenIndex = 0;
@@ -53,10 +92,21 @@ public class SyntaxChecker {
         this.symbolMapper = symbolMapper;
     }
 
+    /**
+     * Get the current token.
+     * @return Symbol
+     */
     private Symbol getToken() {
         return this.tokens.get(this.tokenIndex);
     }
 
+    /**
+     * It creates an error message.
+     *
+     * @param token         LexicalUnit
+     * @param expectedType  LexicalUnit
+     * @return CompilerError
+     */
     private CompilerError createErrorMessage(Symbol token, LexicalUnit expectedType) {
         if (expectedType == LexicalUnit.ENDLINE){
             return new CompilerError(
@@ -81,22 +131,25 @@ public class SyntaxChecker {
 
     }
 
+    /**
+     * Stops Syntax Analyzer execution and returns a compilation error.
+     *
+     * @param token         Symbol
+     * @param expectedType  LexicalUnit
+     */
     private void stopExecutionAndNotifyUser(Symbol token, LexicalUnit expectedType) {
         this.shouldContinue = false;
         this.error = createErrorMessage(token, expectedType);
     }
 
-    private void match(LexicalUnit expectedType, LexicalUnit currentType) {
-        if (this.shouldContinue) {
-            if (expectedType != currentType) {
-                this.shouldContinue = false;
-                Symbol token = this.getToken();
-                this.error = createErrorMessage(token, expectedType);
-            }
-            this.tokenIndex++;
-        }
-    }
-
+    /**
+     * It match a lexycal unit with another. If it does not match it creates a compilation error.
+     *
+     * @param expectedType  LexicalUnit What it is expected to receive.
+     * @param currentType   LexicalUnit What it received.
+     *
+     * @return ParseTree
+     */
     private ParseTree matchTree(LexicalUnit expectedType, LexicalUnit currentType) {
         ParseTree matchTree = null;
         if (this.shouldContinue) {
@@ -112,6 +165,11 @@ public class SyntaxChecker {
         return matchTree;
     }
 
+    /**
+     * Production rule: program.
+     *
+     * @return ParseTree
+     */
     private ParseTree program() {
         ParseTree programTree = null;
         if (this.shouldContinue) {
@@ -134,6 +192,11 @@ public class SyntaxChecker {
         return programTree;
     }
 
+    /**
+     * Production rule: id.
+     *
+     * @return ParseTree
+     */
     private ParseTree id() {
         ParseTree idTree = null;
 
@@ -177,6 +240,11 @@ public class SyntaxChecker {
         return idTree;
     }
 
+    /**
+     * Production rule: IdTail
+     *
+     * @return ParseTree
+     */
     private ParseTree idTail() {
         if (this.shouldContinue) {
             Symbol token = this.getToken();
@@ -200,6 +268,11 @@ public class SyntaxChecker {
         return null;
     }
 
+    /**
+     * Production rule: Variable
+     *
+     * @return ParseTree
+     */
     private ParseTree variables() {
         ParseTree variablesTree = null;
         if (this.shouldContinue) {
@@ -232,6 +305,11 @@ public class SyntaxChecker {
         return variablesTree;
     }
 
+    /**
+     * Production rule: VarList
+     *
+     * @return ParseTree
+     */
     private ParseTree varList() {
         ParseTree varListTree = null;
         if (this.shouldContinue) {
@@ -246,6 +324,11 @@ public class SyntaxChecker {
         return varListTree;
     }
 
+    /**
+     * Production rule: VarListTail
+     *
+     * @return ParseTree
+     */
     private ParseTree varListTail() {
         ParseTree varListTailTree = null;
         if (this.shouldContinue) {
@@ -267,6 +350,11 @@ public class SyntaxChecker {
         return varListTailTree;
     }
 
+    /**
+     * Production rule: Code
+     *
+     * @return ParseTree
+     */
     private ParseTree code() {
         ParseTree codeTree = null;
         if (this.shouldContinue) {
@@ -296,6 +384,11 @@ public class SyntaxChecker {
         return codeTree;
     }
 
+    /**
+     * Production rule: Instruction
+     *
+     * @return ParseTree
+     */
     private ParseTree instruction() {
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
@@ -338,6 +431,11 @@ public class SyntaxChecker {
         return null;
     }
 
+    /**
+     * Production rule: While
+     *
+     * @return ParseTree
+     */
     private ParseTree whileVariable() {
         ParseTree whileVariableTree = null;
         if (this.shouldContinue) {
@@ -364,6 +462,11 @@ public class SyntaxChecker {
         return whileVariableTree;
     }
 
+    /**
+     * Production rule: For
+     *
+     * @return ParseTree
+     */
     private ParseTree forVariable() {
         ParseTree forTree = null;
         if (this.shouldContinue) {
@@ -394,6 +497,11 @@ public class SyntaxChecker {
         return forTree;
     }
 
+    /**
+     * Production rule: Print
+     *
+     * @return ParseTree
+     */
     private ParseTree print() {
         ParseTree printTree = null;
         if (this.shouldContinue) {
@@ -412,6 +520,11 @@ public class SyntaxChecker {
         return printTree;
     }
 
+    /**
+     * Production rule: ExpList
+     *
+     * @return ParseTree
+     */
     private ParseTree expList() {
         ParseTree expListTree = null;
         if (this.shouldContinue) {
@@ -426,6 +539,11 @@ public class SyntaxChecker {
         return expListTree;
     }
 
+    /**
+     * Production rule: ExpListTail
+     *
+     * @return ParseTree
+     */
     private ParseTree expListTail() {
         ParseTree expListTailTree = null;
         if (this.shouldContinue) {
@@ -448,6 +566,11 @@ public class SyntaxChecker {
         return expListTailTree;
     }
 
+    /**
+     * Production rule: If
+     *
+     * @return ParseTree
+     */
     private ParseTree ifVariable() {
         ParseTree ifTree = null;
         if (this.shouldContinue) {
@@ -474,6 +597,11 @@ public class SyntaxChecker {
         return ifTree;
     }
 
+    /**
+     * Production rule: IfTail
+     *
+     * @return ParseTree
+     */
     private ParseTree ifTail() {
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
@@ -501,6 +629,11 @@ public class SyntaxChecker {
         return null;
     }
 
+    /**
+     * Production rule: Cond
+     *
+     * @return ParseTree
+     */
     private ParseTree cond() {
         ParseTree condTree = null;
         if (this.shouldContinue) {
@@ -515,6 +648,11 @@ public class SyntaxChecker {
         return condTree;
     }
 
+    /**
+     * Production rule: CondA
+     *
+     * @return ParseTree
+     */
     private ParseTree condA() {
         ParseTree condATree = null;
         if (this.shouldContinue) {
@@ -539,6 +677,11 @@ public class SyntaxChecker {
         return condATree;
     }
 
+    /**
+     * Production rule: CondAnd
+     *
+     * @return ParseTree
+     */
     private ParseTree condAnd() {
         ParseTree condAndTree = null;
         if (this.shouldContinue) {
@@ -553,6 +696,11 @@ public class SyntaxChecker {
         return condAndTree;
     }
 
+    /**
+     * Production rule: CondFinal
+     *
+     * @return ParseTree
+     */
     private ParseTree condFinal() {
         ParseTree condFinalTree = null;
         if (this.shouldContinue) {
@@ -573,6 +721,11 @@ public class SyntaxChecker {
         return condFinalTree;
     }
 
+    /**
+     * Production rule: SimpleCond
+     *
+     * @return ParseTree
+     */
     private ParseTree simpleCond() {
         ParseTree simpleCondTree = null;
         if (this.shouldContinue) {
@@ -589,6 +742,11 @@ public class SyntaxChecker {
         return simpleCondTree;
     }
 
+    /**
+     * Production rule: Comp
+     *
+     * @return ParseTree
+     */
     private ParseTree comp() {
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
@@ -630,6 +788,11 @@ public class SyntaxChecker {
         return null;
     }
 
+    /**
+     * Production rule: CondAndA
+     *
+     * @return ParseTree
+     */
     private ParseTree condAndA() {
         ParseTree condAndA = null;
         if (this.shouldContinue) {
@@ -654,6 +817,11 @@ public class SyntaxChecker {
         return condAndA;
     }
 
+    /**
+     * Production rule: Assign
+     *
+     * @return ParseTree
+     */
     private ParseTree assign() {
         ParseTree assignTree = null;
         if (this.shouldContinue) {
@@ -670,6 +838,11 @@ public class SyntaxChecker {
         return assignTree;
     }
 
+    /**
+     * Production rule: Read
+     *
+     * @return ParseTree
+     */
     private ParseTree read() {
         ParseTree readTree = null;
         if (this.shouldContinue) {
@@ -688,6 +861,11 @@ public class SyntaxChecker {
         return readTree;
     }
 
+    /**
+     * Production rule: exprArith
+     *
+     * @return ParseTree
+     */
     private ParseTree exprArith() {
         ParseTree exprArithTree = null;
         if (this.shouldContinue) {
@@ -702,6 +880,11 @@ public class SyntaxChecker {
         return exprArithTree;
     }
 
+    /**
+     * Production rule: exprArithA
+     *
+     * @return ParseTree
+     */
     private ParseTree exprArithA() {
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
@@ -746,6 +929,11 @@ public class SyntaxChecker {
         return null;
     }
 
+    /**
+     * Production rule: ExprMult
+     *
+     * @return ParseTree
+     */
     private ParseTree exprMult() {
         ParseTree exprMultTree = null;
         if (this.shouldContinue) {
@@ -760,6 +948,11 @@ public class SyntaxChecker {
         return exprMultTree;
     }
 
+    /**
+     * Production rule: ExprMultA
+     *
+     * @return ParseTree
+     */
     private ParseTree exprMultA() {
         if (this.shouldContinue) {
             List<ParseTree> children = new ArrayList<ParseTree>();
@@ -807,6 +1000,9 @@ public class SyntaxChecker {
         return null;
     }
 
+    /**
+     * It shows the derivation rules list with detail.
+     */
     public void showDerivationRules() {
         System.out.println();
         System.out.println();
@@ -816,6 +1012,9 @@ public class SyntaxChecker {
         }
     }
 
+    /**
+     * It shows the derivation rule numbers only.
+     */
     public void showDerivationRulesShort() {
         System.out.println();
         System.out.println();
@@ -825,22 +1024,44 @@ public class SyntaxChecker {
         }
     }
 
+    /**
+     * It creates and returns the parseTree
+     * @return ParseTree
+     */
     public ParseTree getParseTree() {
         return this.program();
     }
 
+    /**
+     * It verifies that no error was threw.
+     *
+     * @return boolean
+     */
     public boolean isSyntaxCorrect() {
         return this.shouldContinue;
     }
 
+    /**
+     * It returns the compiling error if there was one during syntax checker execution.
+     *
+     * @return CompilerError
+     */
     public CompilerError getError() {
         return this.error;
     }
 
+    /**
+     * It skip a token.
+     */
     private void skipToken() {
         this.tokenIndex++;
     }
 
+    /**
+     * It matches an end line and skip the other ones if there are more than one.
+     *
+     * @return ParseTree
+     */
     private ParseTree skipEndLines() {
         ParseTree endLineTree = this.matchTree(LexicalUnit.ENDLINE, this.getToken().getType());
         while (this.shouldSkipTokens()) {
@@ -849,6 +1070,11 @@ public class SyntaxChecker {
         return endLineTree;
     }
 
+    /**
+     * It verifies if the endline token should be skipped.
+     *
+     * @return boolean
+     */
     private boolean shouldSkipTokens() {
         return this.shouldContinue && this.tokenIndex < this.tokens.size() && this.getToken().getType() == LexicalUnit.ENDLINE;
     }

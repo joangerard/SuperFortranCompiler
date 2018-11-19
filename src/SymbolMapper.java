@@ -1,8 +1,18 @@
+/**
+ * Responsible to map a lexical unit to a string.
+ */
 public class SymbolMapper implements SymbolMapperInterface{
+
+    /**
+     * Constructor
+     */
     public SymbolMapper(){
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String mapSymbolToString(LexicalUnit symbol) {
         switch (symbol) {
             case RPAREN:

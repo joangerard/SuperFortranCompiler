@@ -113,21 +113,26 @@ public class Parser {
                     ErrorType.SYNTAX_ERROR_END_LINE,
                     token.getLine(),
                     token.getColumn(),
-                    token.getValue());
+                    token.getValue(),
+                    "",
+                    this.lines.get(token.getLine()-1));
         }
         else if (expectedType == null) {
             return new CompilerError(
                     ErrorType.SYNTAX_ERROR,
                     token.getLine(),
                     token.getColumn(),
-                    token.getValue());
+                    token.getValue(),
+                    "",
+                    this.lines.get(token.getLine()-1));
         }
         return new CompilerError(
                 ErrorType.SYNTAX_ERROR,
                 token.getLine(),
                 token.getColumn(),
                 token.getValue(),
-                this.symbolMapper.mapSymbolToString(expectedType));
+                this.symbolMapper.mapSymbolToString(expectedType),
+                this.lines.get(token.getLine()-1));
 
     }
 

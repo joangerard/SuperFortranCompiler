@@ -26,9 +26,9 @@ public class FileHandler {
 
 
             while (line != null) {
+                lines.add(line);
                 sb.append(line);
                 line = br.readLine();
-                lines.add(line);
             }
             String everything = sb.toString();
         } catch (IOException e) {

@@ -9,6 +9,7 @@ public class CompilerError {
     private int column;
     private Object value;
     private String expectedValue;
+    private String errorLine;
 
     public CompilerError() {
 
@@ -28,6 +29,7 @@ public class CompilerError {
         this.column = column;
         this.value = value;
         this.expectedValue = "";
+        this.errorLine = "";
     }
 
     /**
@@ -38,12 +40,13 @@ public class CompilerError {
      * @param column    Error column in the code.
      * @param value     Value of the input which triggers the error.
      */
-    public CompilerError(ErrorType errorType, int line, int column, Object value, String expectedValue) {
+    public CompilerError(ErrorType errorType, int line, int column, Object value, String expectedValue, String errorLine) {
         this.errorType = errorType;
         this.line = line + 1;
         this.column = column;
         this.value = value;
         this.expectedValue = expectedValue;
+        this.errorLine = errorLine;
     }
 
     /**
@@ -88,30 +91,50 @@ public class CompilerError {
             case SYNTAX_ERROR_NOT_RECOGNIZED_CHARACTER:
                 return "SYNTAX ERROR NOT RECOGNIZED CHAR: " + this.value.toString() + " not recognized. Please check line: " + this.line + " column: " + this.column;
             case SYNTAX_ERROR:
-                if (this.value.toString() != "\n") {
-                    return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + ". Got an end of line instead of " + this.expectedValue + ". Please remove end of line.";
-                }
-                else if (this.value.toString() != "EOS") {
-                    return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + ". Got { " +this.value.toString() + " } instead of " + this.expectedValue + ".";
-                } else {
-                    return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + " expected " + this.expectedValue + ".";
-                }
+                return getSyntaxErrorMessage();
             case SYNTAX_ERROR_END_LINE:
-                return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column + ". Please add an end of line before {"+ this.value.toString() +"}";
-            case SYNTAX_ERROR_EXTRA_PAR:
-                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra parenthesis.";
-            case SYNTAX_ERROR_MULT:
-                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra multiplication symbol.";
-            case SYNTAX_ERROR_DIVIDE:
-                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra divide symbol.";
-            case SYNTAX_ERROR_MINUS:
-                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra minus symbol.";
-            case SYNTAX_ERROR_SUM:
-                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Extra plus symbol.";
-            case SYNTAX_ERROR_UNEXPECTED_CHAR:
-                return "SYNTAX ERROR near line " + (this.line - 1) + ", column " + this.column + ". Unexpected value {" + this.value +"}.";
+                return getLineErrorDescription(getLineColumnInfo() + ". Please add an end of line before {"+ this.value.toString() +"}");
             default:
                 return "";
         }
+    }
+
+    /**
+     * Get syntax error message.
+     *
+     * @return String
+     */
+    private String getSyntaxErrorMessage() {
+        String errorMessage = "";
+        if (this.value.toString().contains("\\n")) {
+            errorMessage = getLineColumnInfo() + ". Got an end of line instead of { " + this.expectedValue + " }. Please remove end of line.";
+        }
+        else if (this.value.toString() != "EOS") {
+            errorMessage = getLineColumnInfo() + ". Got { " +this.value.toString() + " } instead of { " + this.expectedValue + " }.";
+        } else {
+            errorMessage = getLineColumnInfo() + " expected { " + this.expectedValue + " }.";
+        }
+
+        errorMessage = getLineErrorDescription(errorMessage);
+
+        return errorMessage;
+    }
+
+    private String getLineErrorDescription(String errorMessage) {
+        if (!this.errorLine.equals("")) {
+            errorMessage += "\n\r";
+            errorMessage += "\n\r" + this.errorLine;
+            errorMessage += "\n\r" + new String(new char[this.column]).replace("\0", " ") + "^";
+        }
+        return errorMessage;
+    }
+
+    /**
+     * Get line column error information.
+     *
+     * @return String
+     */
+    private String getLineColumnInfo() {
+        return "SYNTAX ERROR near " + "line " + (this.line - 1) + ", column " + this.column;
     }
 }

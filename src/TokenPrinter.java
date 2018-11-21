@@ -21,7 +21,7 @@ public class TokenPrinter implements PrinterInterface
         List tokens = this.tokenizer.getTokens();
 
         // print in standard output all the tokens.
-        for (int i = 0; i < tokens.size(); i++) 
+        for (int i = 0; i < tokens.size(); i++)
         {
             Symbol symbol = (Symbol)tokens.get(i);
             System.out.println(symbol.toString());

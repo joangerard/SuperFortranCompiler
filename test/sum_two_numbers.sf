@@ -1,9 +1,9 @@
-BEGINPROG Sum_two_numbers
+BEGINPROG SumTwoNumbers
 /* It contains invalid rules like the program name has special characters, some variables starts with numbers, etc. */
-VARIABLES kilo5lopPk,11nick_, NUMBER, 0A123, result    // single comment
-  READ(NUMBER)              // Read a number from user input
-  READ(0A123)              // Read a number from user input
-  result := NUMBER + 0A123
+VARIABLES kiloloppk, nick, number, a123, result    // single comment
+  READ(number)              // Read a number from user input
+  READ(a123)              // Read a number from user input
+  result := number + a123
   result := 2
   result := 100
   result := 6

@@ -18,5 +18,5 @@ public interface TokenizerInterface
     /**
      * @return			List of tokens.
      */
-    public List getTokens();
+    public List<Symbol> getTokens();
 }

@@ -13,7 +13,7 @@ public class FileHandler {
      *
      * @param fileName String containing the filename to read.
      *
-     * @return List<String>
+     * @return List&lt;String&gt;
      *
      * @throws IOException In case no file is found.
      */

@@ -39,6 +39,8 @@ public class CompilerError {
      * @param line      Error line in the code.
      * @param column    Error column in the code.
      * @param value     Value of the input which triggers the error.
+     * @param expectedValue     Value that is expected according to the grammar.
+     * @param errorLine     Line in which the error happens.
      */
     public CompilerError(ErrorType errorType, int line, int column, Object value, String expectedValue, String errorLine) {
         this.errorType = errorType;

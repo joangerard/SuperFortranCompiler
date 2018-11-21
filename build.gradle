@@ -80,6 +80,30 @@ task run() << {
     }
 }
 
+/**
+ * Run parser with a more verbose explanation of the parse tree
+ */
+task runVerbose() << {
+    println "$testFile"
+
+    javaexec {
+        main = "-jar";
+        args = ["dist/part2.jar","-v","test/$testFile"]
+    }
+}
+
+/**
+ * Run parser with a more verbose explanation of the parse tree
+ */
+task runLatex() << {
+    println "$testFile"
+
+    javaexec {
+        main = "-jar";
+        args = ["dist/part2.jar","-v","-wt","parseTree.text","test/$testFile"]
+    }
+}
+
 //task serveJavaDoc(type: Exec){
 //    workingDir 'doc'
 //    commandLine 'python', '-m', 'SimpleHTTPServer'

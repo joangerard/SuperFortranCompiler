@@ -1,18 +1,29 @@
-BEGINPROG PairRecognizer
+BEGINPROG AllGrammar
 
-// Given a number n, read n times a number and sum up.
+/* This program contains all symbols/
+keywords it does not do anything */
 
-VARIABLES n, total
-  READ(n)              // Read The amount of numbers you want to sum.
-  total := 0          // Initialize total variable to be 0
+VARIABLES result, someothervar
+  READ(result)              // comment
+  result := 101
 
-  /* 
-  Sum up all the i inputs 
-  while decreasing n until 0
-   */
-  WHILE ( n > 0 )
-    READ(i)
-    total := total + i
+  IF (5 > 3 AND NOT 5 < 6 ) THEN
+    result := result * 50
+    result := result - 50
+    result := result / 50
+    other := 100
+    PRINT(result)
+    ELSE
+    PRINT(result)
+  ENDIF
+
+  WHILE (result > 0) DO
+    result := result - 1
+    PRINT(result)
   ENDWHILE
-  PRINT (total)
+
+  j := 50
+  FOR i := 0*10 TO (8+8) DO
+    PRINT (i)
+  ENDFOR
 ENDPROG

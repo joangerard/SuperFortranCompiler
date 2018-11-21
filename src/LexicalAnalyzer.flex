@@ -1,5 +1,6 @@
 //import java_cup.runtime.*; uncommet if you use CUP
 import utils.errorhandling.*;
+import java.util.List;
 
 %%// Options of the scanner
 
@@ -33,16 +34,31 @@ ErrorHandlerInterface errorHandler = new ErrorHandler();
 ErrorPrinter errorPrinter = new ErrorPrinter(errorHandler);
 TokenizerInterface tokenizer = new Tokenizer();
 PrinterInterface tokenPrinter = new TokenPrinter(tokenizer);
+public List<Symbol> getTokens(){
+    return tokenizer.getTokens();
+}
+public Boolean gotAnyError() {
+    return errorHandler.getErrors().size() > 0;
+}
+
+public void printIdentifiers() {
+   System.out.println("");
+   System.out.println("Identifiers");
+
+    System.out.println(identifierList.toString());
+}
+
+public void printTokens() {
+    System.out.println("");
+   System.out.println("Tokens");
+
+    tokenPrinter.print();
+}
 
 %}
 
 %eof{//code to execute after scanning
    tokenizer.addToken(LexicalUnit.EOS, yyline, yycolumn, "EOS");
-   tokenPrinter.print();
-   System.out.println(""); 
-   System.out.println("Identifiers");
-   System.out.println(identifierList.toString());
-
     errorPrinter.print();
 %eof}
 
@@ -208,10 +224,10 @@ CloseParenthesis = ")"
 <LONGCOMMENTSTATE> {
     {LongCommentEnd}            {yybegin(YYINITIAL);}
     .                           {}
-    {EndLine}                   {}
+    {EndLine}                   {tokenizer.addToken(LexicalUnit.ENDLINE, yyline, yycolumn,"\\n");}
 }
 
 <SHORTCOMMENTSTATE> {
     {EndLine}                   {yybegin(YYINITIAL);}
-    .                           {}
+    .                           {tokenizer.addToken(LexicalUnit.ENDLINE, yyline, yycolumn,"\\n");}
 }

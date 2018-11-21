@@ -3,10 +3,12 @@ BEGINPROG PrimeNumber
 VARIABLES x,y,result    /* Declare variables X and Y */
   READ(x)              // Read number a
   READ(y)              // Read a number from user input
-  IF (x == y) THEN
-    result:= -1 ELSE
+  IF (x := y) THEN // The Following Syntax Error will appear here: SYNTAX ERROR near line 6, column 8. Got { := } instead of { comparison symbol }
+    result:= -1
+    ELSE
     IF (x > y) THEN
-    result := x ELSE
+    result := x
+    ELSE
     IF (y > x) THEN
     result := y
     ENDIF

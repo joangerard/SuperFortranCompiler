@@ -3,7 +3,7 @@ apply plugin: 'java' // Adding java plugin for gradle
 
 
 
-archivesBaseName = 'part1' // Name of jar
+archivesBaseName = 'part2' // Name of jar
 libsDirName = '../dist' // Directory to put jar in
 buildDir = 'src' // Directory for all generated code
 

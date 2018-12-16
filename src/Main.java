@@ -44,7 +44,9 @@ public class Main{
                     SymbolMapperInterface symbolMapper = new SymbolMapper();
                     Parser parser = new Parser(tokens, lines, symbolMapper);
                     ParseTree parseTree = parser.getParseTree();
-
+                    SemanticHelper semanticHelper = new SemanticHelper();
+                    ParseTree abstractSemanticTree = semanticHelper.getAbstractTree(parseTree);
+                    LlvmCreator llvmCreator = new LlvmCreator();
                     if (!parser.isSyntaxCorrect()) {
                         System.out.println("Syntax errors. Fix them in order to continue.");
                         System.out.println("");
@@ -76,7 +78,33 @@ public class Main{
                             System.out.println("Parse tree was created. Please check " + latexFile + " file.");
                         }
 
-                        parser.showDerivationRulesShort();
+                        if(argumentHandler.shouldWriteAbstractSyntaxTreeText()) {
+                            String latexFile = argumentHandler.giveTexFile();
+                            if (latexFile.equals("")) {
+                                latexFile = "abstract_syntax_tree.tex";
+                            }
+                            FileHandler.writeInFile(abstractSemanticTree.toLaTeX(),latexFile);
+                            System.out.println();
+                            System.out.println();
+                            System.out.println();
+                            System.out.println("Abstract syntax tree was created. Please check " + latexFile + " file.");
+                        }
+
+                        if(argumentHandler.shouldGenerateLlvmFile()){
+                            String content = llvmCreator.create(abstractSemanticTree);
+                            String llFile = argumentHandler.giveLlFile();
+                            if (llFile.equals("")) {
+                                llFile = "auto-generated.ll";
+                            }
+                            FileHandler.writeInFile(content, llFile);
+
+                            System.out.println();
+                            System.out.println();
+                            System.out.println();
+                            System.out.println("Llvm file was created. Please check " + llFile + " file.");
+                        }
+
+                        //parser.showDerivationRulesShort();
                     }
                 }
             }

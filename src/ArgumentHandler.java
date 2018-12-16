@@ -52,6 +52,14 @@ public class ArgumentHandler {
     public Boolean shouldWriteParseTreeText() {
         return this.arguments.contains("-wt");
     }
+    public Boolean shouldWriteAbstractSyntaxTreeText() {
+        return this.arguments.contains("-ast");
+    }
+
+    public Boolean shouldGenerateLlvmFile()
+    {
+        return this.arguments.contains("-llvm");
+    }
 
     /**
      * Responsible to verify if the -h option was introduced.
@@ -71,6 +79,16 @@ public class ArgumentHandler {
         for (String argument :
                 this.arguments) {
             if (argument.contains(".tex")) {
+                return argument;
+            }
+        }
+        return "";
+    }
+
+    public String giveLlFile() {
+        for (String argument :
+                this.arguments) {
+            if (argument.contains(".ll")) {
                 return argument;
             }
         }

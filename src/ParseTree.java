@@ -39,6 +39,24 @@ public class ParseTree {
         this.children = chdn;
     }
 
+    public boolean hasChildren()
+    {
+        return this.children.size() != 0;
+    }
+
+    public List<ParseTree> getChildren() {
+        return this.children;
+    }
+
+    public void addChild(ParseTree child){
+        this.children.add(child);
+    }
+
+    public Symbol getSymbol()
+    {
+        return label;
+    }
+
 
     /**
      * Writes the tree as LaTeX code.

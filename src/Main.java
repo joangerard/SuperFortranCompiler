@@ -45,8 +45,7 @@ public class Main{
                     Parser parser = new Parser(tokens, lines, symbolMapper);
                     ParseTree parseTree = parser.getParseTree();
                     SemanticHelper semanticHelper = new SemanticHelper();
-                    ParseTree abstractSemanticTree = semanticHelper.getAbstractTree(parseTree);
-                    LlvmCreator llvmCreator = new LlvmCreator();
+
                     if (!parser.isSyntaxCorrect()) {
                         System.out.println("Syntax errors. Fix them in order to continue.");
                         System.out.println("");
@@ -79,6 +78,9 @@ public class Main{
                         }
 
                         if(argumentHandler.shouldWriteAbstractSyntaxTreeText()) {
+                            ParseTree abstractSemanticTree = semanticHelper.getAbstractTree(parseTree);
+                            LlvmCreator llvmCreator = new LlvmCreator();
+                            String content = llvmCreator.create(abstractSemanticTree);
                             String latexFile = argumentHandler.giveTexFile();
                             if (latexFile.equals("")) {
                                 latexFile = "abstract_syntax_tree.tex";
@@ -88,10 +90,8 @@ public class Main{
                             System.out.println();
                             System.out.println();
                             System.out.println("Abstract syntax tree was created. Please check " + latexFile + " file.");
-                        }
 
-                        if(argumentHandler.shouldGenerateLlvmFile()){
-                            String content = llvmCreator.create(abstractSemanticTree);
+
                             String llFile = argumentHandler.giveLlFile();
                             if (llFile.equals("")) {
                                 llFile = "auto-generated.ll";

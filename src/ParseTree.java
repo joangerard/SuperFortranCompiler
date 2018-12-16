@@ -96,13 +96,15 @@ public class ParseTree {
         }
 
         treeTikZ.append("}\n");
-        for (ParseTree child : children) {
-            treeTikZ.append("child { ");
-            if(child == null) {
-                String a = "";
+        if ( children != null) {
+            for (ParseTree child : children) {
+                treeTikZ.append("child { ");
+                if(child == null) {
+                    String a = "";
+                }
+                treeTikZ.append(child.toTikZ());
+                treeTikZ.append(" }\n");
             }
-            treeTikZ.append(child.toTikZ());
-            treeTikZ.append(" }\n");
         }
         return treeTikZ.toString();
     }

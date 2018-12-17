@@ -1,3 +1,4 @@
+import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 import utils.codegeneration.AST;
 import utils.codegeneration.Symbols;
@@ -66,6 +67,9 @@ public class ASTGenerator {
                 break;
             case Symbols.READ:
                 result = read(firstChild);
+                break;
+            case Symbols.IF:
+                result = ifExpr(firstChild);
                 break;
         }
         return result;
@@ -331,5 +335,158 @@ public class ASTGenerator {
 
     private String getValue(ParseTree tree) {
         return tree.getSymbol().getValue().toString();
+    }
+
+    private AST ifExpr(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        AST condTree = cond(children.get(2));
+        AST codeTree = code(children.get(6));
+
+        AST ifTree = new AST(Type.IF, Symbols.IF);
+        ifTree.setLeft(condTree);
+        ifTree.setRight(codeTree);
+
+        return ifTree;
+    }
+
+    private AST cond(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        AST condAndTree = condAnd(children.get(0));
+        AST condATree = condA(children.get(1));
+
+        if (condATree == null) {
+            return condAndTree;
+        }
+
+        condATree.setLeft(condAndTree);
+        return condATree;
+    }
+
+    private AST condA(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        if (children.size() == 1) {
+            return null;
+        }
+
+        AST orTree = booleanVariable(children.get(0));
+        AST condAndTree = condAnd(children.get(1));
+        AST condATree = condA(children.get(2));
+
+        if (condATree == null) {
+            orTree.setRight(condAndTree);
+            return orTree;
+        }
+
+        AST newAST = addLeafToTheBottomLeft(condAndTree, condATree);
+        orTree.setRight(newAST);
+        return orTree;
+    }
+
+    private AST condAnd(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        AST condFinalTree = condFinal(children.get(0));
+        AST condAndATree = condAndA(children.get(1));
+
+        if (condAndATree == null) {
+            return condFinalTree;
+        }
+
+        return addLeafToTheBottomLeft(condFinalTree, condAndATree);
+    }
+
+    private AST condAndA(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        if (children.size() == 1) {
+            return null;
+        }
+
+        AST andTree = booleanVariable(children.get(0));
+        AST condFinalTree = condFinal(children.get(1));
+        AST condAndATree = condAndA(children.get(2));
+
+        if (condAndATree == null) {
+            andTree.setRight(condFinalTree);
+            return andTree;
+        }
+
+        andTree.setRight(condFinalTree);
+        return addLeafToTheBottomLeft(andTree, condAndATree);
+    }
+
+    private AST condFinal(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        if (children.size() == 1) {
+            return simpleCond(children.get(0));
+        }
+
+        AST notTree = booleanVariable(children.get(0));
+        AST simpleCondTree = simpleCond(children.get(1));
+
+        notTree.setRight(simpleCondTree);
+
+        return notTree;
+    }
+
+    private AST simpleCond(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        AST exprArithTree = exprArith(children.get(0));
+        AST compTree = comp(children.get(1));
+        AST exprArithTree2 = exprArith(children.get(2));
+
+        compTree.setLeft(exprArithTree);
+        compTree.setRight(exprArithTree2);
+
+        return compTree;
+    }
+
+    //IF GENERATION
+    private AST comp(ParseTree tree) {
+        ParseTree child = tree.getChildren().get(0);
+        AST result = null;
+        switch (getType(child)) {
+            case LEQ:
+                result = new AST(Type.LEQ, Symbols.LEQ);
+                break;
+            case GEQ:
+                result = new AST(Type.GEQ, Symbols.GEQ);
+                break;
+            case LT:
+                result = new AST(Type.LT, Symbols.LT);
+                break;
+            case GT:
+                result = new AST(Type.GT, Symbols.GT);
+                break;
+            case NEQ:
+                result = new AST(Type.NEQ, Symbols.NEQ);
+                break;
+            case EQ:
+                result = new AST(Type.EQ, Symbols.EQ);
+                break;
+        }
+
+        return result;
+    }
+
+    private AST booleanVariable(ParseTree tree) {
+        AST result = null;
+        switch (getType(tree)) {
+            case NOT:
+                result = new AST(Type.NOT, Symbols.NOT);
+                break;
+            case AND:
+                result = new AST(Type.AND, Symbols.AND);
+                break;
+            case OR:
+                result = new AST(Type.OR, Symbols.OR);
+                break;
+        }
+        return result;
     }
 }

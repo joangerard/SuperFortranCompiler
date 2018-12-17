@@ -15,7 +15,16 @@ public final class Symbols {
     public static final String EXPLIST = "EXPLIST";
     public static final String EXPARITH = "EXPARITH";
     public static final String READ = "READ";
-
+    public static final String LEQ = "<=";
+    public static final String GEQ = ">=";
+    public static final String LT = "<";
+    public static final String GT = ">";
+    public static final String EQ = "=";
+    public static final String NEQ = "<>";
+    public static final String AND = "AND";
+    public static final String OR = "OR";
+    public static final String NOT = "NOT";
+    public static final String IF = "IF";
 
     private Symbols(){
 

@@ -14,5 +14,15 @@ public enum Type {
     ASSIGN_INS,
     PRINT,
     EXPLIST,
-    READ
+    READ,
+    EQ,
+    NEQ,
+    LEQ,
+    GEQ,
+    LT,
+    GT,
+    OR,
+    AND,
+    NOT,
+    IF
 }

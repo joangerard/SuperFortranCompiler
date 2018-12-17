@@ -11,5 +11,7 @@ public enum Type {
     DIVIDE,
     TIMES,
     NUMBER,
-    ASSIGN_INS
+    ASSIGN_INS,
+    PRINT,
+    EXPLIST
 }

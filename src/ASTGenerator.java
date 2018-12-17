@@ -61,6 +61,9 @@ public class ASTGenerator {
             case Symbols.ASSIGN:
                 result = assign(firstChild);
                 break;
+            case Symbols.PRINT:
+                result = print(firstChild);
+                break;
         }
         return result;
     }
@@ -216,6 +219,40 @@ public class ASTGenerator {
             return exprArith(children.get(1));
         }
         return result;
+    }
+
+    private AST print(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        return expList(children.get(2));
+    }
+
+    private AST expList(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        AST exprArithTree = exprArith(children.get(0));
+        AST expListTail = expListTail(children.get(1));
+
+        if (expListTail == null) {
+            return exprArithTree;
+        }
+
+        AST expList = new AST(Type.PRINT, Symbols.PRINT);
+        expList.setLeft(exprArithTree);
+        expList.setRight(expListTail);
+
+        return expList;
+    }
+
+    private AST expListTail(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+        int numberOfChildren = children.size();
+
+        if (numberOfChildren == 1) {
+            return null;
+        }
+
+        return expList(children.get(1));
     }
 
     private AST idTail(ParseTree tree) {

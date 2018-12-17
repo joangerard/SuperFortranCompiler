@@ -59,6 +59,27 @@ public class CodeGenerator {
             case ASSIGN_INS:
                 assign(instructionTree);
                 break;
+            case PRINT:
+                print(tree);
+                break;
+        }
+    }
+
+    private void print(AST tree) {
+        AST left = tree.getLeft();
+        AST right = tree.getRight();
+
+        String exprLeft = processArithOperation(left);
+        instructions.add(String.format("call void @println(i32 %s)", exprLeft));
+
+        switch (right.getType()) {
+            case PRINT:
+                print(right);
+                break;
+            default:
+                String operationRes = processArithOperation(right);
+                instructions.add(String.format("call void @println(i32 %s)", operationRes));
+                break;
         }
     }
 

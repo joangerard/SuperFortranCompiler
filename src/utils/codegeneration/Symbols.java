@@ -11,6 +11,9 @@ public final class Symbols {
     public static final String VARIABLES = "VARIABLES";
     public static final String ASSIGN = "ASSIGN";
     public static final String CODE = "CODE";
+    public static final String PRINT = "PRINT";
+    public static final String EXPLIST = "EXPLIST";
+    public static final String EXPARITH = "EXPARITH";
 
 
     private Symbols(){

@@ -14,6 +14,7 @@ public final class Symbols {
     public static final String PRINT = "PRINT";
     public static final String EXPLIST = "EXPLIST";
     public static final String EXPARITH = "EXPARITH";
+    public static final String READ = "READ";
 
 
     private Symbols(){

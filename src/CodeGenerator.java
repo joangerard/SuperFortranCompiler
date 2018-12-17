@@ -62,6 +62,21 @@ public class CodeGenerator {
             case PRINT:
                 print(tree);
                 break;
+            case READ:
+                read(instructionTree);
+        }
+    }
+
+    private void read(AST tree) {
+        AST right = tree.getRight();
+        String varname = "%" + tree.getValue();
+        String tempVar = this.getLlvmVariable();
+
+        instructions.add(String.format("%s = call i32 @readInt()", tempVar ));
+        instructions.add(String.format("store i32 %s, i32* %s", tempVar, varname));
+
+        if(right != null) {
+            read(right);
         }
     }
 
@@ -72,14 +87,8 @@ public class CodeGenerator {
         String exprLeft = processArithOperation(left);
         instructions.add(String.format("call void @println(i32 %s)", exprLeft));
 
-        switch (right.getType()) {
-            case PRINT:
-                print(right);
-                break;
-            default:
-                String operationRes = processArithOperation(right);
-                instructions.add(String.format("call void @println(i32 %s)", operationRes));
-                break;
+        if (right != null) {
+            print(right);
         }
     }
 

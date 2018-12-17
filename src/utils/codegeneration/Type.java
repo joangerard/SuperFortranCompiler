@@ -13,5 +13,6 @@ public enum Type {
     NUMBER,
     ASSIGN_INS,
     PRINT,
-    EXPLIST
+    EXPLIST,
+    READ
 }

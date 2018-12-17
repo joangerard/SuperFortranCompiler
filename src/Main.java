@@ -1,3 +1,5 @@
+import utils.codegeneration.AST;
+
 import java.util.List;
 
 public class Main{
@@ -44,7 +46,7 @@ public class Main{
                     SymbolMapperInterface symbolMapper = new SymbolMapper();
                     Parser parser = new Parser(tokens, lines, symbolMapper);
                     ParseTree parseTree = parser.getParseTree();
-
+                    ASTGenerator astGenerator = new ASTGenerator();
                     if (!parser.isSyntaxCorrect()) {
                         System.out.println("Syntax errors. Fix them in order to continue.");
                         System.out.println("");
@@ -74,6 +76,22 @@ public class Main{
                             System.out.println();
                             System.out.println();
                             System.out.println("Parse tree was created. Please check " + latexFile + " file.");
+                        }
+
+                        if(argumentHandler.shouldWriteASTText()) {
+
+                            AST astGenerated = astGenerator.create(parseTree);
+                            CodeGenerator codeGenerator = new CodeGenerator();
+                            String instruction = codeGenerator.llvm(astGenerated);
+
+                            String latexFile =  "ast.tex";
+                            String llFile =  "auto-gen-code.ll";
+
+                            FileHandler.writeInFile(astGenerated.toLaTeX(),latexFile);
+                            System.out.println("Abstract syntax tree was created. Please check " + latexFile + " file.");
+
+                            FileHandler.writeInFile(instruction, llFile);
+                            System.out.println("LLVM file created. Please check. Please check " + llFile + " file.");
                         }
 
                         parser.showDerivationRulesShort();

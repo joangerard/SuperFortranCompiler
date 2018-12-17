@@ -54,6 +54,15 @@ public class ArgumentHandler {
     }
 
     /**
+     * Responsible to verify if the -ast option was introduced.
+     *
+     * @return Boolean
+     */
+    public Boolean shouldWriteASTText() {
+        return this.arguments.contains("-ast");
+    }
+
+    /**
      * Responsible to verify if the -h option was introduced.
      *
      * @return Boolean

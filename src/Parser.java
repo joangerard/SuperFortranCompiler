@@ -402,32 +402,32 @@ public class Parser {
                     this.derivationRules.add(new Rule(14, "<Instruction> -> <Read>",  this.getToken()));
                     ParseTree readTree = this.read();
                     children.add(readTree);
-                    return new ParseTree(new Symbol(null, READ), children);
+                    return new ParseTree(new Symbol(null, "INSTRUCTION"), children);
                 case VARNAME:
                     this.derivationRules.add(new Rule(9, "<Instruction> -> <Varname>",  this.getToken()));
                     ParseTree assign = this.assign();
                     children.add(assign);
-                    return new ParseTree(new Symbol(null, ASSIGN), children);
+                    return new ParseTree(new Symbol(null, "INSTRUCTION"), children);
                 case IF:
                     this.derivationRules.add(new Rule(10, "<Instruction> -> <If>",  this.getToken()));
                     ParseTree ifTree = this.ifVariable();
                     children.add(ifTree);
-                    return new ParseTree(new Symbol(null, IF), children);
+                    return new ParseTree(new Symbol(null, "INSTRUCTION"), children);
                 case WHILE:
                     this.derivationRules.add(new Rule(11, "<Instruction> -> <While>",  this.getToken()));
                     ParseTree whileTree = this.whileVariable();
                     children.add(whileTree);
-                    return new ParseTree(new Symbol(null, WHILE), children);
+                    return new ParseTree(new Symbol(null, "INSTRUCTION"), children);
                 case FOR:
                     this.derivationRules.add(new Rule(12, "<Instruction> -> <FOR>",  this.getToken()));
                     ParseTree forTree = this.forVariable();
                     children.add(forTree);
-                    return new ParseTree(new Symbol(null, FOR), children);
+                    return new ParseTree(new Symbol(null, "INSTRUCTION"), children);
                 case PRINT:
                     this.derivationRules.add(new Rule(13, "<Instruction> -> PRINT",  this.getToken()));
                     ParseTree printTree = this.print();
                     children.add(printTree);
-                    return new ParseTree(new Symbol(null, PRINT), children);
+                    return new ParseTree(new Symbol(null, "INSTRUCTION"), children);
                 default:
                     this.stopExecutionAndNotifyUser(this.getToken(), LexicalUnit.WHILE);
             }

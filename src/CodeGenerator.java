@@ -70,6 +70,9 @@ public class CodeGenerator {
             case IF:
                 ifProcess(tree);
                 break;
+            case ELSE:
+                ifElseProcess(tree);
+                break;
         }
     }
 
@@ -110,6 +113,31 @@ public class CodeGenerator {
         instructions.add(instruction);
     }
 
+    private void ifElseProcess(AST tree) {
+        AST ifTree = tree.getLeft();
+        AST elseCode = tree.getRight();
+        AST ifCond = ifTree.getLeft();
+        AST ifCode = ifTree. getRight();
+
+        String cond = processBooleanInstruction(ifCond);
+        int condNumber = this.ifVariableNumber();
+
+        String condYes = "yes"+condNumber;
+        String condNo = "no"+condNumber;
+        String endif = "endif"+condNumber;
+        this.instructions.add(String.format("br i1 %s, label %s, label %s", cond, "%"+condYes, "%"+condNo));
+        //IF
+        this.instructions.add(condYes+":");
+        code(ifCode);
+        this.instructions.add("br label %"+endif);
+        //ELSE
+        this.instructions.add(condNo + ":");
+        code(elseCode);
+        this.instructions.add("br label %"+endif);
+        //ENDIF
+        this.instructions.add(endif+":");
+    }
+
     private void ifProcess(AST tree) {
         AST left = tree.getLeft();
         AST right = tree.getRight();
@@ -119,9 +147,11 @@ public class CodeGenerator {
         String condYes = "yes"+condNumber;
         String endif = "endif"+condNumber;
         this.instructions.add(String.format("br i1 %s, label %s, label %s", cond, "%"+condYes, "%"+endif));
+        //IF
         this.instructions.add(condYes+":");
         code(right);
         this.instructions.add("br label %"+endif);
+        //ENDIF
         this.instructions.add(endif+":");
     }
 

@@ -25,6 +25,7 @@ public final class Symbols {
     public static final String OR = "OR";
     public static final String NOT = "NOT";
     public static final String IF = "IF";
+    public static final String ELSE = "ELSE";
 
     private Symbols(){
 

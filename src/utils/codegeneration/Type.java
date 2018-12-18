@@ -24,5 +24,6 @@ public enum Type {
     OR,
     AND,
     NOT,
-    IF
+    IF,
+    ELSE
 }

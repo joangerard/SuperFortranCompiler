@@ -337,17 +337,36 @@ public class ASTGenerator {
         return tree.getSymbol().getValue().toString();
     }
 
+    private AST ifTail(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        if (children.size() == 1) {
+            return null;
+        }
+
+        return code(children.get(2));
+    }
+
     private AST ifExpr(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
         AST condTree = cond(children.get(2));
         AST codeTree = code(children.get(6));
+        AST ifTailTree = ifTail(children.get(7));
 
         AST ifTree = new AST(Type.IF, Symbols.IF);
         ifTree.setLeft(condTree);
         ifTree.setRight(codeTree);
 
-        return ifTree;
+        if (ifTailTree == null) {
+            return ifTree;
+        }
+
+        AST elseTree = new AST(Type.ELSE, Symbols.ELSE);
+        elseTree.setRight(ifTailTree);
+        elseTree.setLeft(ifTree);
+
+        return elseTree;
     }
 
     private AST cond(ParseTree tree) {

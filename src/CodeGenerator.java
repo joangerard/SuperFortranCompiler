@@ -32,8 +32,13 @@ public class CodeGenerator {
         AST variablesTree = tree.getLeft();
         AST codeTree = tree.getRight();
 
-        variables(variablesTree);
-        code(codeTree);
+        if (variablesTree != null) {
+            variables(variablesTree);
+        }
+
+        if (codeTree != null) {
+            code(codeTree);
+        }
     }
 
     private void variables(AST tree) {

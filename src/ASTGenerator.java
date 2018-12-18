@@ -21,8 +21,13 @@ public class ASTGenerator {
         AST variablesTree = variables(variablesChild);
         AST codeTree = code(codeChild);
 
-        programTree.setLeft(variablesTree);
-        programTree.setRight(codeTree);
+        if (variablesTree != null) {
+            programTree.setLeft(variablesTree);
+        }
+
+        if (codeTree != null) {
+            programTree.setRight(codeTree);
+        }
 
         return programTree;
     }
@@ -99,6 +104,12 @@ public class ASTGenerator {
 
     private AST variables(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
+
+        if (children.size() == 1 && getValue(children.get(0)).equals(Symbols.EPSILON))
+        {
+            return null;
+        }
+
         ParseTree secondChild = children.get(1);
 
         AST varlistTree = varList(secondChild);

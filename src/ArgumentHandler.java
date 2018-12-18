@@ -86,6 +86,31 @@ public class ArgumentHandler {
         return "";
     }
 
+    public boolean shouldGenerateCodeAndSaveit()
+    {
+        return this.arguments.contains("-o");
+    }
+
+    public boolean shouldExecuteCode()
+    {
+        return this.arguments.contains("-exec");
+    }
+
+    /**
+     * Responsible to verify if a .sf file was introduced.
+     *
+     * @return String filename.
+     */
+    public String giveLlvmFile() {
+        for (String argument :
+                this.arguments) {
+            if (argument.contains(".ll")) {
+                return argument;
+            }
+        }
+        return "";
+    }
+
     /**
      * Responsible to verify if a .sf file was introduced.
      *

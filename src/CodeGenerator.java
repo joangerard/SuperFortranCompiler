@@ -5,11 +5,13 @@ import java.util.List;
 
 public class CodeGenerator {
     List<String> instructions;
-    int lastInstructionName;
+    int lastInstructionNumber;
+    int ifNumber;
 
     CodeGenerator(){
         this.instructions = new ArrayList<>();
-        this.lastInstructionName = 0;
+        this.lastInstructionNumber = 0;
+        this.ifNumber = 0;
         initializeInstructions();
     }
 
@@ -64,6 +66,10 @@ public class CodeGenerator {
                 break;
             case READ:
                 read(instructionTree);
+                break;
+            case IF:
+                ifProcess(tree);
+                break;
         }
     }
 
@@ -92,7 +98,7 @@ public class CodeGenerator {
         }
     }
 
-    private String assign(AST tree) {
+    private void assign(AST tree) {
         AST variable = tree.getLeft();
         AST result = tree.getRight();
 
@@ -102,7 +108,183 @@ public class CodeGenerator {
 
         String instruction = String.format("store i32 %s, i32* %s", value, varname);
         instructions.add(instruction);
+    }
 
+    private void ifProcess(AST tree) {
+        AST left = tree.getLeft();
+        AST right = tree.getRight();
+
+        String cond = processBooleanInstruction(left);
+        int condNumber = this.ifVariableNumber();
+        String condYes = "yes"+condNumber;
+        String endif = "endif"+condNumber;
+        this.instructions.add(String.format("br i1 %s, label %s, label %s", cond, "%"+condYes, "%"+endif));
+        this.instructions.add(condYes+":");
+        code(right);
+        this.instructions.add("br label %"+endif);
+        this.instructions.add(endif+":");
+    }
+
+    private  String andInst(AST tree) {
+        AST left = tree.getLeft();
+        AST right = tree.getRight();
+
+        String leftTree = processBooleanInstruction(left);
+        String rightTree = processBooleanInstruction(right);
+
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = mul i1 %s, %s", varname, leftTree, rightTree);
+        this.instructions.add(instruction);
+
+        return varname;
+    }
+
+    private String orInst(AST tree) {
+        AST left = tree.getLeft();
+        AST right = tree.getRight();
+
+        String leftTree = processBooleanInstruction(left);
+        String rightTree = processBooleanInstruction(right);
+
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = add i1 %s, %s", varname, leftTree, rightTree);
+        this.instructions.add(instruction);
+
+        return varname;
+    }
+
+    private String notInst(AST tree) {
+        AST right = tree.getRight();
+        return processBooleanOperationNOT(right);
+    }
+
+    private String processBooleanInstruction(AST tree) {
+        String varname = "";
+        switch (tree.getType()) {
+            case AND:
+                varname = andInst(tree);
+                break;
+            case OR:
+                varname = orInst(tree);
+                break;
+            case NOT:
+                varname = notInst(tree);
+                break;
+            case EQ:
+            case NEQ:
+            case LEQ:
+            case LT:
+            case GEQ:
+            case GT:
+                varname = processBooleanOperation(tree);
+        }
+        return varname;
+    }
+
+
+    private String processBooleanOperationNOT(AST tree) {
+        AST left = tree.getLeft();
+        AST right = tree.getRight();
+
+        String leftResult = processArithOperation(left);
+        String rightResult = processArithOperation(right);
+
+        String varname = "";
+
+        switch (tree.getType()) {
+            case EQ:
+                varname = ne(leftResult, rightResult);
+                break;
+            case NEQ:
+                varname = eq(leftResult, rightResult);
+                break;
+            case LEQ:
+                varname = sgt(leftResult, rightResult);
+                break;
+            case LT:
+                varname = sge(leftResult, rightResult);
+                break;
+            case GEQ:
+                varname = slt(leftResult, rightResult);
+                break;
+            case GT:
+                varname = sle(leftResult, rightResult);
+                break;
+        }
+        return varname;
+    }
+
+    private String processBooleanOperation(AST tree) {
+        AST left = tree.getLeft();
+        AST right = tree.getRight();
+
+        String leftResult = processArithOperation(left);
+        String rightResult = processArithOperation(right);
+
+        String varname = "";
+
+        switch (tree.getType()) {
+            case EQ:
+                varname = eq(leftResult, rightResult);
+                break;
+            case NEQ:
+                varname = ne(leftResult, rightResult);
+                break;
+            case LEQ:
+                varname = sle(leftResult, rightResult);
+                break;
+            case LT:
+                varname = slt(leftResult, rightResult);
+                break;
+            case GEQ:
+                varname = sge(leftResult, rightResult);
+                break;
+            case GT:
+                varname = sgt(leftResult, rightResult);
+                break;
+        }
+        return varname;
+    }
+
+    private String eq(String val1, String val2) {
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = icmp eq i32 %s, %s", varname, val1, val2);
+        this.instructions.add(instruction);
+        return varname;
+    }
+
+    private String ne(String val1, String val2) {
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = icmp ne i32 %s, %s", varname, val1, val2);
+        this.instructions.add(instruction);
+        return varname;
+    }
+
+    private String sgt(String val1, String val2) {
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = icmp sgt i32 %s, %s", varname, val1, val2);
+        this.instructions.add(instruction);
+        return varname;
+    }
+
+    private String sge(String val1, String val2) {
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = icmp sge i32 %s, %s", varname, val1, val2);
+        this.instructions.add(instruction);
+        return varname;
+    }
+
+    private String slt(String val1, String val2) {
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = icmp slt i32 %s, %s", varname, val1, val2);
+        this.instructions.add(instruction);
+        return varname;
+    }
+
+    private String sle(String val1, String val2) {
+        String varname = getLlvmVariable();
+        String instruction = String.format("%s = icmp sle i32 %s, %s", varname, val1, val2);
+        this.instructions.add(instruction);
         return varname;
     }
 
@@ -184,9 +366,15 @@ public class CodeGenerator {
     }
 
     private String getLlvmVariable() {
-        String varname = "%" + lastInstructionName;
-        lastInstructionName++;
+        String varname = "%" + this.lastInstructionNumber;
+        this.lastInstructionNumber++;
         return varname;
+    }
+
+    private int ifVariableNumber() {
+        int var = this.ifNumber;
+        this.ifNumber++;
+        return var;
     }
 
     private String getInstructions() {

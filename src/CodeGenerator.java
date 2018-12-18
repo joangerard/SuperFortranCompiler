@@ -7,11 +7,15 @@ public class CodeGenerator {
     List<String> instructions;
     int lastInstructionNumber;
     int ifNumber;
+    int whileNumber;
+    int forNumber;
 
     CodeGenerator(){
         this.instructions = new ArrayList<>();
         this.lastInstructionNumber = 0;
         this.ifNumber = 0;
+        this.whileNumber = 0;
+        this.forNumber = 0;
         initializeInstructions();
     }
 
@@ -42,15 +46,17 @@ public class CodeGenerator {
     }
 
     private void code(AST tree) {
-        AST instructionTree = tree.getLeft();
-        AST codeTree = tree.getRight();
+        if (tree != null) {
+            AST instructionTree = tree.getLeft();
+            AST codeTree = tree.getRight();
 
-        if (instructionTree != null) {
-            instruction(instructionTree);
-        }
+            if (instructionTree != null) {
+                instruction(instructionTree);
+            }
 
-        if (codeTree != null){
-            code(codeTree);
+            if (codeTree != null){
+                code(codeTree);
+            }
         }
     }
 
@@ -72,6 +78,12 @@ public class CodeGenerator {
                 break;
             case ELSE:
                 ifElseProcess(tree);
+                break;
+            case WHILE:
+                whileExpr(tree);
+                break;
+            case FOR:
+                forExpr(tree);
                 break;
         }
     }
@@ -101,7 +113,7 @@ public class CodeGenerator {
         }
     }
 
-    private void assign(AST tree) {
+    private String assign(AST tree) {
         AST variable = tree.getLeft();
         AST result = tree.getRight();
 
@@ -111,6 +123,58 @@ public class CodeGenerator {
 
         String instruction = String.format("store i32 %s, i32* %s", value, varname);
         instructions.add(instruction);
+
+        return variable.getValue();
+    }
+
+    private void forExpr(AST tree) {
+        AST condTree = tree.getLeft();
+        AST codeTree = tree.getRight();
+        AST assignTree = condTree.getLeft();
+        AST toTree = condTree.getRight();
+
+        String assignmentVar = assign(assignTree.getRight());
+        String to = processArithOperation(toTree);
+
+        int forNumber = this.forVariableNumber();
+
+        String tempVar = this.getLlvmVariable();
+
+        String forIns = "for" + forNumber;
+        String doInst = "do" + forNumber;
+        String endForIns = "endfor" + forNumber;
+        String condIns = "%cond"+forNumber;
+
+        instructions.add(String.format("br label %s", "%"+forIns));
+        instructions.add(String.format("%s: ", forIns));
+        instructions.add(String.format("%s = load i32, i32* %s", tempVar, "%"+assignmentVar));
+        instructions.add(String.format("%s = icmp sle i32 %s, %s", condIns, tempVar, to));
+        instructions.add(String.format("br i1 %s, label %s, label %s", condIns, "%" + doInst, "%" + endForIns));
+        instructions.add(String.format(String.format("%s: ", doInst)));
+        code(codeTree);
+        String tempVar2 = this.getLlvmVariable();
+        instructions.add(String.format("%s = add i32 %s, 1", tempVar2, tempVar));
+        instructions.add(String.format("store i32 %s, i32* %s", tempVar2, "%"+assignmentVar));
+        instructions.add(String.format("br label %s", "%" + forIns));
+        instructions.add(String.format("%s: ", endForIns));
+    }
+
+    private void whileExpr(AST tree) {
+        AST condTree = tree.getLeft();
+        AST codeTree = tree.getRight();
+
+        int whileNumber = this.whileVariableNumber();
+        String whileIns = "while" + whileNumber;
+        String doInst = "do"+ whileNumber;
+        String endWhileInst = "endwhile"+ whileNumber;
+        instructions.add(String.format("br label %s", "%"+whileIns));
+        instructions.add(String.format("%s: ", whileIns));
+        String cond = processBooleanInstruction(condTree);
+        instructions.add(String.format("br i1 %s, label %s, label %s", cond, "%"+ doInst, "%" + endWhileInst));
+        instructions.add(String.format("%s: ", doInst));
+        code(codeTree);
+        instructions.add(String.format("br label %s", "%" + whileIns));
+        instructions.add(String.format("%s: ", endWhileInst));
     }
 
     private void ifElseProcess(AST tree) {
@@ -383,7 +447,17 @@ public class CodeGenerator {
                 break;
             case VARNAME:
                 variable = getLlvmVariable();
-                String instruction = variable + " = load i32, i32* %"+tree.getValue();
+                String instruction = "";
+                // if -variable
+                if (tree.getValue().contains("-")) {
+                    instruction = variable + " = load i32, i32* %"+tree.getValue().split("-")[1]+"\n";
+                    String tempVariable = this.getLlvmVariable();
+                    instruction += tempVariable + " = mul i32 -1, "+variable;
+                    variable = tempVariable;
+                }
+                else {
+                    instruction = variable + " = load i32, i32* %"+tree.getValue();
+                }
                 this.instructions.add(instruction);
                 break;
         }
@@ -404,6 +478,18 @@ public class CodeGenerator {
     private int ifVariableNumber() {
         int var = this.ifNumber;
         this.ifNumber++;
+        return var;
+    }
+
+    private int whileVariableNumber() {
+        int var = this.whileNumber;
+        this.whileNumber++;
+        return var;
+    }
+
+    private int forVariableNumber() {
+        int var = this.forNumber;
+        this.forNumber++;
         return var;
     }
 

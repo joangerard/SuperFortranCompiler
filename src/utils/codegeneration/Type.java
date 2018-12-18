@@ -25,5 +25,8 @@ public enum Type {
     AND,
     NOT,
     IF,
-    ELSE
+    ELSE,
+    WHILE,
+    FOR,
+    COND
 }

@@ -1,0 +1,80 @@
+BEGINPROG Conditions
+
+/* This program test some conditions in order to check correct behaviour.*/
+
+    VARIABLES a, b, c
+    a := 1
+    b := 2
+    c := 3
+
+    // SIMPLE CONDITIONS
+    IF (a = a) THEN
+        PRINT(1)
+    ENDIF
+
+    IF (a < b) THEN
+        PRINT(2)
+    ENDIF
+
+    IF (c > b) THEN
+        PRINT(3)
+    ENDIF
+
+    IF (c >= b) THEN
+        PRINT(4)
+    ENDIF
+
+    IF (b <= 2) THEN
+        PRINT(5)
+    ENDIF
+
+    IF (2 <> 3 + 4) THEN
+        PRINT(6)
+    ENDIF
+
+    // ############### TEST NOT ##################
+
+    IF ( NOT 2 <> 2) THEN
+        PRINT(7)
+    ENDIF
+
+    IF ( NOT 2 < 1) THEN
+        PRINT(8)
+    ENDIF
+
+    IF ( NOT 1 > 2) THEN
+        PRINT(9)
+    ENDIF
+
+    IF ( NOT 3 <= 2) THEN
+        PRINT(10)
+    ENDIF
+
+    IF ( NOT 2 >= 3) THEN
+        PRINT(11)
+    ENDIF
+
+    IF ( NOT 2 = 3) THEN
+        PRINT(12)
+    ENDIF
+
+   // ################## TEST AND OR ################
+
+    IF (2 > 1 AND 2 > 3) THEN
+        // not enter here
+    ELSE
+        PRINT(13)
+    ENDIF
+
+    // Evaluate as: 0 < 1 OR ((5 > 3 AND 2 > 3) AND 3 > 5)
+    IF (0 > 1 OR 5 > 3 AND 2 > 3 AND 3 > 5) THEN
+        // not enter here
+    ELSE
+        PRINT(14)
+    ENDIF
+
+    // Evaluate as: 0 < 1 OR ((5 > 3 AND 2 > 3) AND 3 > 5) OR 10 > 2
+    IF (0 > 1 OR 5 > 3 AND 2 > 3 AND 3 > 5 OR 10 > 2) THEN
+        PRINT(15)
+    ENDIF
+ENDPROG

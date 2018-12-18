@@ -82,7 +82,7 @@ public class Main{
 
                             AST astGenerated = astGenerator.create(parseTree);
                             CodeGenerator codeGenerator = new CodeGenerator();
-                            String instruction = codeGenerator.llvm(astGenerated);
+
 
                             String latexFile =  "ast.tex";
                             String llFile =  "auto-gen-code.ll";
@@ -90,6 +90,7 @@ public class Main{
                             FileHandler.writeInFile(astGenerated.toLaTeX(),latexFile);
                             System.out.println("Abstract syntax tree was created. Please check " + latexFile + " file.");
 
+                            String instruction = codeGenerator.llvm(astGenerated);
                             FileHandler.writeInFile(instruction, llFile);
                             System.out.println("LLVM file created. Please check. Please check " + llFile + " file.");
                         }

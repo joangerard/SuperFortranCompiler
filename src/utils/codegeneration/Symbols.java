@@ -26,6 +26,9 @@ public final class Symbols {
     public static final String NOT = "NOT";
     public static final String IF = "IF";
     public static final String ELSE = "ELSE";
+    public static final String WHILE = "WHILE";
+    public static final String FOR = "FOR";
+    public static final String COND = "COND";
 
     private Symbols(){
 

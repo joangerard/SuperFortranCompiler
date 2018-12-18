@@ -71,6 +71,12 @@ public class ASTGenerator {
             case Symbols.IF:
                 result = ifExpr(firstChild);
                 break;
+            case Symbols.WHILE:
+                result = whileExpr(firstChild);
+                break;
+            case Symbols.FOR:
+                result = forExpr(firstChild);
+                break;
         }
         return result;
     }
@@ -335,6 +341,51 @@ public class ASTGenerator {
 
     private String getValue(ParseTree tree) {
         return tree.getSymbol().getValue().toString();
+    }
+
+    private AST forExpr(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        AST codeTree = code(children.get(8));
+        AST condTree = new AST(Type.COND, Symbols.COND);
+
+        // ASSIGNMENT
+        AST varnameTree = varName(children.get(1));
+        AST assign = assignSym(children.get(2));
+        AST exprArithTree = exprArith(children.get(3));
+
+        AST assignTree = new AST(Type.ASSIGN_INS, "ASSIGN");
+
+        assign.setRight(exprArithTree);
+        assign.setLeft(varnameTree);
+        assignTree.setRight(assign);
+
+        // TO
+        AST exprArithToTree = exprArith(children.get(5));
+
+        // COND
+        condTree.setLeft(assignTree);
+        condTree.setRight(exprArithToTree);
+
+        // COND - CODE
+        AST forTree = new AST(Type.FOR, Symbols.FOR);
+        forTree.setLeft(condTree);
+        forTree.setRight(codeTree);
+
+        return forTree;
+    }
+
+    private AST whileExpr(ParseTree tree) {
+        List<ParseTree> children = tree.getChildren();
+
+        AST condTree = cond(children.get(2));
+        AST codeTree = code(children.get(6));
+
+        AST whileTree = new AST(Type.WHILE, Symbols.WHILE);
+        whileTree.setLeft(condTree);
+        whileTree.setRight(codeTree);
+
+        return whileTree;
     }
 
     private AST ifTail(ParseTree tree) {

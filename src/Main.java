@@ -18,10 +18,13 @@ public class Main{
                 System.out.println("");
                 System.out.println("");
                 System.out.println("");
-                System.out.println("-v or --verbose\t\t Show the left most derivation tree detailed list.");
-                System.out.println("-t\t\t\t\t\t Show the tokens list");
-                System.out.println("-i\t\t\t\t\t Show the identifiers list.");
-                System.out.println("-wt [FILENAME]\t\t Create a .tex file to see the Parse Tree. Default file: parse_tree.tex.");
+                System.out.println("-v or --verbose\t\t\t Show the left most derivation tree detailed list.");
+                System.out.println("-t\t\t\t\t\t\t Show the tokens list");
+                System.out.println("-i\t\t\t\t\t\t Show the identifiers list.");
+                System.out.println("-ast\t\t\t\t\t Show the identifiers list.");
+                System.out.println("-o [LLVM FILENAME]\t\t Create the llvm file.");
+                System.out.println("-exec\t\t\t\t\t Execute the .sf program.");
+                System.out.println("-wt [FILENAME]\t\t\t Create a .tex file to see the Parse Tree. Default file: parse_tree.tex.");
 
             }
 

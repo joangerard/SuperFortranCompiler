@@ -97,6 +97,7 @@ public class Main{
                             System.out.println("Abstract syntax tree was created. Please check " + latexFile + " file.");
                         }
 
+                        // -o outputfile.ll : generation of llvm code.
                         if (argumentHandler.shouldGenerateCodeAndSaveit()) {
                             String llFile = argumentHandler.giveLlvmFile();
                             if (llFile.equals("")) {
@@ -107,6 +108,7 @@ public class Main{
                             System.out.println("LLVM file created. Please check. Please check " + llFile + " file.");
                         }
 
+                        // -exec : code execution.
                         if (argumentHandler.shouldExecuteCode()) {
                             Shell shell = new Shell();
                             String autogen = "autogen";

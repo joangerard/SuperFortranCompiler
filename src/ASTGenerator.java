@@ -8,10 +8,22 @@ import java.util.List;
 
 public class ASTGenerator {
 
+    /**
+     * Creates an AST tree bassed on the parser tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     public AST create(ParseTree tree) {
         return this.program(tree);
     }
 
+    /**
+     * It generates the AST structure for PROGRAM Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST program(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
         ParseTree variablesChild = children.get(3);
@@ -32,6 +44,12 @@ public class ASTGenerator {
         return programTree;
     }
 
+    /**
+     * It generates the AST structure for CODE Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST code(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -58,6 +76,12 @@ public class ASTGenerator {
         return newCodeTree;
     }
 
+    /**
+     * It generates the AST structure for INSTRUCTION Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST instruction(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
         ParseTree firstChild = children.get(0);
@@ -86,6 +110,12 @@ public class ASTGenerator {
         return result;
     }
 
+    /**
+     * It generates the AST structure for ASSIGN Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST assign(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -102,6 +132,12 @@ public class ASTGenerator {
         return assignTree;
     }
 
+    /**
+     * It generates the AST structure for VARIABLES Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST variables(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -119,6 +155,12 @@ public class ASTGenerator {
         return variables;
     }
 
+    /**
+     * It generates the AST structure for VARLIST Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST varList(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
         ParseTree firstChild = children.get(0);
@@ -136,6 +178,12 @@ public class ASTGenerator {
         return varnameTree;
     }
 
+    /**
+     * It generates the AST structure for VARLISTTAIL Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST varListTail(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
         ParseTree secondChild = children.get(1);
@@ -143,6 +191,12 @@ public class ASTGenerator {
         return varList(secondChild);
     }
 
+    /**
+     * It generates the AST structure for EXPRARITH Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST exprArith(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -156,6 +210,12 @@ public class ASTGenerator {
         return addLeafToTheBottomLeft(exprMultTree, exprArithATree);
     }
 
+    /**
+     * It generates the AST structure for EXPRARITHA Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST exprArithA(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -176,6 +236,12 @@ public class ASTGenerator {
         return addLeafToTheBottomLeft(arithTree, exprArithATree);
     }
 
+    /**
+     * It generates the AST structure for EXPRMULT Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST exprMult(ParseTree tree) {
         List <ParseTree> children = tree.getChildren();
 
@@ -189,6 +255,12 @@ public class ASTGenerator {
         return addLeafToTheBottomLeft(idTree, exprMultA);
     }
 
+    /**
+     * It generates the AST structure for EXPRMULTA Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST exprMultA(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -209,6 +281,12 @@ public class ASTGenerator {
         return addLeafToTheBottomLeft(arithTree, exprMultATree);
     }
 
+    /**
+     * It adds a leaf into the bottom left of the tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST addLeafToTheBottomLeft(AST leaf, AST tree)
     {
         if (tree.getLeft() == null) {
@@ -222,6 +300,12 @@ public class ASTGenerator {
         }
     }
 
+    /**
+     * It generates the AST structure for ID Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST id(ParseTree tree) {
         AST result = null;
         List<ParseTree> children = tree.getChildren();
@@ -245,12 +329,24 @@ public class ASTGenerator {
         return result;
     }
 
+    /**
+     * It generates the AST structure for PRINT Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST print(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
         return expList(children.get(2));
     }
 
+    /**
+     * It generates the AST structure for EXPLIST Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST expList(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -270,6 +366,12 @@ public class ASTGenerator {
         return expList;
     }
 
+    /**
+     * It generates the AST structure for EXPLISTTAIL Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST expListTail(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
         int numberOfChildren = children.size();
@@ -281,6 +383,12 @@ public class ASTGenerator {
         return expList(children.get(1));
     }
 
+    /**
+     * It generates the AST structure for READ Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST read(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -292,6 +400,12 @@ public class ASTGenerator {
         return readTree;
     }
 
+    /**
+     * It generates the AST structure for IDTAIL Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST idTail(ParseTree tree) {
         AST result = null;
         ParseTree child = tree.getChildren().get(0);
@@ -299,6 +413,12 @@ public class ASTGenerator {
         return result;
     }
 
+    /**
+     * It generates the AST structure for VARIABLE Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST getVariable(ParseTree child) {
         AST result = null;
         switch (getType(child)) {
@@ -312,21 +432,34 @@ public class ASTGenerator {
         return result;
     }
 
+    /**
+     * It generates the AST structure for VARNAME Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST varName(ParseTree tree) {
         String value = tree.getSymbol().getValue().toString();
         return new AST(Type.VARNAME, value);
     }
 
-    private AST number(ParseTree tree) {
-        String value = tree.getSymbol().getValue().toString();
-        return new AST(Type.NUMBER, value);
-    }
-
+    /**
+     * It generates the AST structure for ASSIGN Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST assignSym(ParseTree tree) {
         String value = tree.getSymbol().getValue().toString();
         return new AST(Type.ASSIGN, value);
     }
 
+    /**
+     * It generates the AST structure for arithmetic symbol Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST arithSymbol(ParseTree tree) {
         AST result = null;
         switch (getType(tree)){
@@ -346,14 +479,32 @@ public class ASTGenerator {
         return result;
     }
 
+    /**
+     * It returns the parser tree type
+     *
+     * @param tree ParseTree
+     * @return LexicalUnit
+     */
     private LexicalUnit getType(ParseTree tree) {
         return tree.getSymbol().getType();
     }
 
+    /**
+     * It returns the parser tree value
+     *
+     * @param tree ParseTree
+     * @return LexicalUnit
+     */
     private String getValue(ParseTree tree) {
         return tree.getSymbol().getValue().toString();
     }
 
+    /**
+     * It generates the AST structure for FOR Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST forExpr(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -386,6 +537,12 @@ public class ASTGenerator {
         return forTree;
     }
 
+    /**
+     * It generates the AST structure for WHILE Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST whileExpr(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -399,6 +556,12 @@ public class ASTGenerator {
         return whileTree;
     }
 
+    /**
+     * It generates the AST structure for IFTAIL Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST ifTail(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -409,6 +572,12 @@ public class ASTGenerator {
         return code(children.get(2));
     }
 
+    /**
+     * It generates the AST structure for IF Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST ifExpr(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -431,6 +600,12 @@ public class ASTGenerator {
         return elseTree;
     }
 
+    /**
+     * It generates the AST structure for COND Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST cond(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -445,6 +620,12 @@ public class ASTGenerator {
         return condATree;
     }
 
+    /**
+     * It generates the AST structure for CONDA Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST condA(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -466,6 +647,12 @@ public class ASTGenerator {
         return orTree;
     }
 
+    /**
+     * It generates the AST structure for CONDAND Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST condAnd(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -479,6 +666,12 @@ public class ASTGenerator {
         return addLeafToTheBottomLeft(condFinalTree, condAndATree);
     }
 
+    /**
+     * It generates the AST structure for CONDANDA Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST condAndA(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -499,6 +692,12 @@ public class ASTGenerator {
         return addLeafToTheBottomLeft(andTree, condAndATree);
     }
 
+    /**
+     * It generates the AST structure for CONDFINAL Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST condFinal(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -514,6 +713,12 @@ public class ASTGenerator {
         return notTree;
     }
 
+    /**
+     * It generates the AST structure for SIMPLECOND Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST simpleCond(ParseTree tree) {
         List<ParseTree> children = tree.getChildren();
 
@@ -527,7 +732,12 @@ public class ASTGenerator {
         return compTree;
     }
 
-    //IF GENERATION
+    /**
+     * It generates the AST structure for COMP Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST comp(ParseTree tree) {
         ParseTree child = tree.getChildren().get(0);
         AST result = null;
@@ -555,6 +765,12 @@ public class ASTGenerator {
         return result;
     }
 
+    /**
+     * It generates the AST structure for boolean comparison Parse Tree.
+     *
+     * @param tree ParseTree
+     * @return AST
+     */
     private AST booleanVariable(ParseTree tree) {
         AST result = null;
         switch (getType(tree)) {

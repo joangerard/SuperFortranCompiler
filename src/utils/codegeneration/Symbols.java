@@ -1,5 +1,8 @@
 package utils.codegeneration;
 
+/**
+ * Static class containing all the symbols needed for generating code.
+ */
 public final class Symbols {
     public static final String DIVISION = "/";
     public static final String TIMES = "*";

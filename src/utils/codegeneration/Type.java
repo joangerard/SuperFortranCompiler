@@ -1,5 +1,8 @@
 package utils.codegeneration;
 
+/**
+ * All types used in the AST structure.
+ */
 public enum Type {
     PROGRAM,
     VARIABLES,

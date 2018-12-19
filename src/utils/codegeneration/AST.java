@@ -1,5 +1,8 @@
 package utils.codegeneration;
 
+/**
+ * Class responsible for generating AST structure.
+ */
 public class AST {
 
     private String value;

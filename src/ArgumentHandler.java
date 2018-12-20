@@ -54,6 +54,15 @@ public class ArgumentHandler {
     }
 
     /**
+     * Responsible to verify if the -ast option was introduced.
+     *
+     * @return Boolean
+     */
+    public Boolean shouldWriteASTText() {
+        return this.arguments.contains("-ast");
+    }
+
+    /**
      * Responsible to verify if the -h option was introduced.
      *
      * @return Boolean
@@ -71,6 +80,31 @@ public class ArgumentHandler {
         for (String argument :
                 this.arguments) {
             if (argument.contains(".tex")) {
+                return argument;
+            }
+        }
+        return "";
+    }
+
+    public boolean shouldGenerateCodeAndSaveit()
+    {
+        return this.arguments.contains("-o");
+    }
+
+    public boolean shouldExecuteCode()
+    {
+        return this.arguments.contains("-exec");
+    }
+
+    /**
+     * Responsible to verify if a .sf file was introduced.
+     *
+     * @return String filename.
+     */
+    public String giveLlvmFile() {
+        for (String argument :
+                this.arguments) {
+            if (argument.contains(".ll")) {
                 return argument;
             }
         }

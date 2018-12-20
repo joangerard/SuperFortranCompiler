@@ -1,0 +1,22 @@
+BEGINPROG Counter
+
+/* Shows factorial of n */
+
+    VARIABLES n, factorial
+    factorial := -8 + 5 + 6*(3+2) / 10 + 1 // this is 1, for testing assignment priorities.
+
+    READ(n)
+
+    // factorial of n >= 17 needs a bigger integer to be represented for our Super-Fortran program.
+    IF (n < 17) THEN
+        WHILE( n > 1) DO
+            factorial := factorial * n * (n - 1)
+            n := n - 2
+        ENDWHILE
+
+        PRINT(factorial)
+    ELSE
+        PRINT(-1)
+    ENDIF
+
+ENDPROG

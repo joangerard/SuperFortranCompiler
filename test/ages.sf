@@ -1,0 +1,23 @@
+BEGINPROG Ages
+
+/* Introduce an age of a person, it shows the number 1 if he/she is an adult, 0 otherwise.
+    The program will end if you introduce a negative age or greater than 120.
+ */
+
+    VARIABLES age
+    age := 0
+
+    WHILE( age >= 0 AND age <= 120) DO
+        READ(age)
+
+        // adult or not
+        IF (age >= 18) THEN
+            PRINT(1)
+        ELSE
+            PRINT(0)
+        ENDIF
+    ENDWHILE
+
+    // END OF PROGRAM print random values and the negative of the last age introduced.
+    PRINT(-1, -2, -age)
+ENDPROG

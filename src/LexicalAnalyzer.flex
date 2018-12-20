@@ -86,7 +86,7 @@ EndProg = "ENDPROG"
 //Variables
 Variables = "VARIABLES"
 VarName = [a-z][a-z0-9]*
-SpecialChars = [_\!@#\$%\^&\.\?\|\/\{\}\[\]\`\~\"\'\;]
+SpecialChars = [_\!@#\$%\^&\.\?\|\{\}\[\]\`\~\"\'\;]
 AtLeastOneUppercase = {AnyChar}[A-Z]+{AnyChar}
 MixedSpecialChar = {AnyChar}{SpecialChars}+{AnyChar}
 DigitsAtThebegining = [0-9]+{AnyChar}

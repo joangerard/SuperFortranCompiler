@@ -15,6 +15,7 @@ import java.util.ArrayList;
  */
 
 public class ParseTree {
+
     private Symbol label;             // The label of the root of the tree
     private List<ParseTree> children; // Its children, which are trees themselves
 
@@ -39,6 +40,14 @@ public class ParseTree {
         this.children = chdn;
     }
 
+    public List<ParseTree> getChildren()
+    {
+        return this.children;
+    }
+
+    public Symbol getSymbol() {
+        return label;
+    }
 
     /**
      * Writes the tree as LaTeX code.

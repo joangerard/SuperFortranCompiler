@@ -12,7 +12,6 @@ doc/*
 *.tex
 *.aux
 *.log
-*.pdf
 *.gz
 out/production/SuperFortranLexicAnalizer/tmp/*
 out/production/SuperFortranLexicAnalizer/META-INFO/MANIFEST.MF

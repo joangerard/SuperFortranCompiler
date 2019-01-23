@@ -1,7 +1,28 @@
 # Super Fortran Compiler
 
+A simple compiler for Super Fortran language (A very simple version of Fortran language). This is an 
+example for creating your own compiler containing all the necessary steps to generate your 
+own compiler. The grammar and 
+all language aspects are documented and well defined in .pdf files inside Documents-Manuals/Statements folder.
+
+The complete documentation about the development and the command line options that this project offers 
+can be found in folder Documents-Manuals/Documents.
+
+In order to make it run just generate a .jar file and use the command line implicitly used in the documentation.
+You can use Gradle as well.
+
+This project is separated in three main parts: Syntax Analyzer, Parser and Semantic Analyzer.
+
+We use JFlex and LLVM.
+
 ### Part 1 : Lexical Analyzer ###
 Recognize the different lexical units of "Super Fortran" language using Jflex
+
+### Part 2 : Parser ###
+Simple decent recursive parser
+
+### Part 3 : Code Generation LLVM ###
+Generate LLVM code in order to complete the compiler process.
 
 ## Installing / Getting started
 
@@ -101,6 +122,7 @@ gradle run -PtestFile=all_grammar.sf
 ## Links
 
 - Jflex Manual: http://jflex.de/manual.html
+- LLVM: https://llvm.org/docs/GettingStarted.html
 
 
 ## Licensing
